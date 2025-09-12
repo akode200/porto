@@ -157,7 +157,7 @@
     <a href="#skills">Skills</a>
     <a href="#portfolio">Portfolio</a>
     <a href="#contact">Contact</a>
-    <a href="#tools">Tools</a>
+    <a href="PrintLabel.html">Tools</a>
   </nav>
 
   <section id="about">
@@ -221,26 +221,6 @@
   </div>
 
 </section>
-<section id="tools">
-  <h2 style="text-align:center;margin-bottom:1.5rem;">Tools</h2>
-
-  <!-- START Print Barcode Tool -->
-  <div class="container">
-      <div class="form-container shadow-sm p-3 mb-5 bg-body rounded">
-          <h4 class="text-center mb-4">Upload File .txt & Generate Label</h4>
-          <label for="fileInput" class="form-label">Upload File .txt:</label>
-          <input type="file" id="fileInput" accept=".txt" class="form-control mb-3">
-          
-          <button class="btn btn-primary print-button mb-4" onclick="printLabel()">Print All Labels</button>
-      </div>
-  </div>
-
-  <div class="container">
-      <div id="labelContainer" class="row"></div>
-  </div>
-  <!-- END Print Barcode Tool -->
-</section>
-
 
   <section id="contact">
     <h2>Contact Me</h2>
@@ -253,86 +233,6 @@
   <footer>
     <p>&copy; 2025 Miftah Parid. All rights reserved.</p>
   </footer>
-
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-<script>
-    let dataLines = [];
-    // Event saat file dipilih
-    document.getElementById('fileInput').addEventListener('change', handleFileSelect);
-
-    function handleFileSelect(event) {
-        const file = event.target.files[0];
-        if (file && file.type === 'text/plain') {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const content = e.target.result;
-                dataLines = content.split('\n').map(line => line.trim()).filter(line => line);
-                generateAllLabels(dataLines);
-            };
-            reader.readAsText(file);
-        } else {
-            alert('Please select a valid .txt file.');
-        }
-    }
-
-    function generateAllLabels(lines) {
-        const labelContainer = document.getElementById('labelContainer');
-        labelContainer.innerHTML = '';
-
-        lines.forEach((line) => {
-            const data = line.split('	');
-            if (data.length === 3) {
-                const [namaBarang, kodeFA, lokasi] = data;
-                const label = createLabelElement(namaBarang, kodeFA, lokasi);
-                labelContainer.appendChild(label);
-            } else {
-                alert('Data format is incorrect.');
-            }
-        });
-    }
-
-    function createLabelElement(namaBarang, kodeFA, lokasi) {
-        const labelDiv = document.createElement('div');
-        labelDiv.className = 'col-12 col-md-6 col-lg-4 d-flex justify-content-center';
-        labelDiv.innerHTML = `
-            <div class="label-container">
-                <div class="logo-container">
-                    <img src="logo.png" alt="Logo" class="logo">
-                </div>
-                <div class="top-container">
-                    <div class="qrcode-container">
-                        <canvas class="qrcode"></canvas>
-                    </div>
-                    <div class="text-container">
-                        <p class="barang">${namaBarang}</p>
-                        <p class="kodeFAOutput"><b>${kodeFA}</b></p>
-                    </div>
-                </div>
-                <p class="lokasi">${lokasi}</p>
-            </div>
-        `;
-
-        const qrData = `${kodeFA}`;
-        const canvas = labelDiv.querySelector('.qrcode');
-        QRCode.toCanvas(canvas, qrData, {
-            width: 20,
-            height: 20,
-            margin: 1,
-            color: {
-                dark: "#000000",
-                light: "#ffffff"
-            }
-        }, function (error) {
-            if (error) console.error(error);
-        });
-
-        return labelDiv;
-    }
-
-    function printLabel() {
-        window.print();
-    }
-</script>
 
 </body>
 </html>

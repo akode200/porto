@@ -120,16 +120,22 @@
       margin: 0;
     }
     @media print {
-      body { background: white; }
-      .content { display: none; } /* sembunyikan form input */
-      #labelOutput {
-        display: block;
+      body {
         margin: 0;
+        padding: 0;
+        background: white;
+      }
+      #labelOutput {
+        margin: 0;
+        padding: 0;
       }
       .label-container {
-        border: none; /* hilangkan border saat print */
+        margin: 0;
+        border: none;
+        page-break-after: always;
       }
     }
+
   </style>
 </head>
 <body>
@@ -204,3 +210,4 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
   </script>
 </body>
 </html>
+

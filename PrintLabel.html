@@ -16,12 +16,48 @@
       margin-bottom: 2rem;
     }
     .content {
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
       background: #fff;
       padding: 2rem;
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+    button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #007bff;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #labelOutput {
+      margin-top: 2rem;
+    }
+    .label {
+      border: 1px solid #333;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      background: #f1f1f1;
     }
     #attribution {
       margin-top: 2rem;
@@ -39,8 +75,17 @@
 <body>
   <h1>Print Label</h1>
   <div class="content">
-    <p>Halaman ini digunakan untuk mencetak label/barcode yang pernah saya buat.</p>
+    <p>Masukkan data secara manual (format: <b>NamaBarang [TAB] KodeFA [TAB] Lokasi</b> per baris):</p>
     
+    <textarea id="manualInput" placeholder="Contoh:
+KOMPUTER, LENOVO M70E    C0097    CIREBON-WAHIDIN
+PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
+    
+    <button onclick="generateLabels()">Generate Labels</button>
+    <button onclick="window.print()">Print</button>
+
+    <div id="labelOutput"></div>
+
     <!-- attribution -->
     <h6 id="attribution" class="text-center mb-4">
       Print Label by MiftahParid Cirebon@2025
@@ -52,23 +97,53 @@
       const attribution = document.getElementById("attribution");
       const expectedText = "Print Label by MiftahParid Cirebon@2025";
 
-      // Fungsi normalisasi: hapus spasi berlebih + linebreak
       function normalizeText(text) {
         return text.replace(/\s+/g, " ").trim();
       }
 
-      // Validasi attribution
       if (!attribution || normalizeText(attribution.textContent) !== expectedText) {
         document.body.innerHTML =
           "<h2 style='color:red;text-align:center;margin-top:20%;'>Script dihentikan karena pelanggaran integritas.</h2>";
         throw new Error("Attribution check failed.");
       }
 
-      // Tambahkan klik agar redirect ke portfolio
       attribution.addEventListener("click", function () {
         window.open("https://akode200.github.io/porto/", "_blank");
       });
     });
+
+    function generateLabels() {
+      const input = document.getElementById("manualInput").value.trim();
+      const output = document.getElementById("labelOutput");
+      output.innerHTML = "";
+
+      if (!input) {
+        alert("Mohon masukkan data terlebih dahulu.");
+        return;
+      }
+
+      const lines = input.split("\n");
+      lines.forEach(line => {
+        const parts = line.split(/\t+/); // pisah berdasarkan TAB
+        if (parts.length === 3) {
+          const [namaBarang, kodeFA, lokasi] = parts;
+          const div = document.createElement("div");
+          div.className = "label";
+          div.innerHTML = `
+            <p><b>${namaBarang}</b></p>
+            <p>Kode FA: ${kodeFA}</p>
+            <p>Lokasi: ${lokasi}</p>
+          `;
+          output.appendChild(div);
+        } else {
+          const error = document.createElement("div");
+          error.className = "label";
+          error.style.color = "red";
+          error.textContent = `Format salah: ${line}`;
+          output.appendChild(error);
+        }
+      });
+    }
   </script>
 </body>
 </html>

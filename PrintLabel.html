@@ -66,7 +66,7 @@
       justify-content: space-between;
       border-radius: 6px;
       box-sizing: border-box;
-      page-break-after: always; /* tiap label jadi satu halaman PDF */
+      page-break-after: always;
     }
     .logo-container {
       width: 100%;
@@ -114,9 +114,8 @@
       text-decoration: underline;
     }
 
-    /* Setting kertas untuk print */
     @page {
-      size: 50.8mm 35.7mm; /* ukuran kertas label */
+      size: 50.8mm 35.7mm;
       margin: 0;
     }
     @media print {
@@ -126,7 +125,7 @@
         background: white;
       }
       .content {
-        display: none; /* ⬅️ sembunyikan form, tombol, attribution */
+        display: none;
       }
       #labelOutput {
         margin: 0;
@@ -138,7 +137,6 @@
         page-break-after: always;
       }
     }
-
   </style>
 </head>
 <body>
@@ -159,12 +157,26 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
     </h6>
   </div>
 
-  <!-- output label -->
   <div id="labelOutput"></div>
 
-  <!-- QRCode.js -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
+    // Biarkan TAB menambah spasi di textarea, bukan pindah tombol
+    document.getElementById("manualInput").addEventListener("keydown", function(e) {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + "\t" + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 1;
+      }
+    });
+
+    // Attribution bisa diklik
+    document.getElementById("attribution").addEventListener("click", function() {
+      window.open("https://akode200.github.io/porto/", "_blank");
+    });
+
     function generateLabels() {
       const input = document.getElementById("manualInput").value.trim();
       const output = document.getElementById("labelOutput");
@@ -177,7 +189,7 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
 
       const lines = input.split("\n");
       lines.forEach(line => {
-        const parts = line.split(/\t+/); // split by TAB
+        const parts = line.split(/\t+/); 
         if (parts.length === 3) {
           const [namaBarang, kodeFA, lokasi] = parts;
           const label = document.createElement("div");
@@ -199,7 +211,6 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
           `;
           output.appendChild(label);
 
-          // generate QRCode
           const canvas = label.querySelector(".qrcode");
           QRCode.toCanvas(canvas, kodeFA, {
             width: 40,
@@ -213,5 +224,3 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
   </script>
 </body>
 </html>
-
-

@@ -50,14 +50,54 @@
     }
     #labelOutput {
       margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
     }
-    .label {
-      border: 1px solid #333;
-      padding: 10px;
-      margin-bottom: 10px;
-      font-size: 14px;
+    .label-container {
+      width: 50.8mm;
+      height: 35mm;
+      padding: 5px;
+      background: white;
+      border: 1px solid #ccc;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       border-radius: 6px;
-      background: #f1f1f1;
+    }
+    .logo-container {
+      width: 100%;
+      margin-bottom: 2px;
+    }
+    .logo {
+      width: 60%;
+      max-width: 80px;
+    }
+    .top-container {
+      display: flex;
+      align-items: center;
+    }
+    .qrcode-container {
+      width: 30%;
+      display: flex;
+      justify-content: center;
+      margin-right: 5px;
+    }
+    .qrcode {
+      height: 40px;
+      width: 40px;
+    }
+    .text-container {
+      width: 70%;
+      font-size: 7pt;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+    .kodeFAOutput {
+      font-size: 6pt;
+    }
+    .lokasi {
+      font-size: 7pt;
     }
     #attribution {
       margin-top: 2rem;
@@ -70,12 +110,17 @@
       color: #007bff;
       text-decoration: underline;
     }
+    @media print {
+      body { background: white; }
+      .content { display: none; }
+      #labelOutput { margin: 0; }
+    }
   </style>
 </head>
 <body>
   <h1>Print Label</h1>
   <div class="content">
-    <p>Masukkan data secara manual (format: <b>NamaBarang [TAB] KodeFA [TAB] Lokasi</b> per baris):</p>
+    <p>Masukkan data manual (format: <b>NamaBarang [TAB] KodeFA [TAB] Lokasi</b> per baris):</p>
     
     <textarea id="manualInput" placeholder="Contoh:
 KOMPUTER, LENOVO M70E    C0097    CIREBON-WAHIDIN
@@ -92,6 +137,8 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
     </h6>
   </div>
 
+  <!-- QRCode.js -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const attribution = document.getElementById("attribution");
@@ -124,20 +171,38 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
 
       const lines = input.split("\n");
       lines.forEach(line => {
-        const parts = line.split(/\t+/); // pisah berdasarkan TAB
+        const parts = line.split(/\t+/); // split by TAB
         if (parts.length === 3) {
           const [namaBarang, kodeFA, lokasi] = parts;
-          const div = document.createElement("div");
-          div.className = "label";
-          div.innerHTML = `
-            <p><b>${namaBarang}</b></p>
-            <p>Kode FA: ${kodeFA}</p>
-            <p>Lokasi: ${lokasi}</p>
+          const label = document.createElement("div");
+          label.className = "label-container";
+          label.innerHTML = `
+            <div class="logo-container">
+              <img src="images/Logo.png" alt="Logo" class="logo">
+            </div>
+            <div class="top-container">
+              <div class="qrcode-container">
+                <canvas class="qrcode"></canvas>
+              </div>
+              <div class="text-container">
+                <p>${namaBarang}</p>
+                <p class="kodeFAOutput"><b>${kodeFA}</b></p>
+              </div>
+            </div>
+            <p class="lokasi">${lokasi}</p>
           `;
-          output.appendChild(div);
+          output.appendChild(label);
+
+          // generate QRCode
+          const canvas = label.querySelector(".qrcode");
+          QRCode.toCanvas(canvas, kodeFA, {
+            width: 40,
+            height: 40,
+            margin: 1,
+            color: { dark: "#000000", light: "#ffffff" }
+          });
         } else {
           const error = document.createElement("div");
-          error.className = "label";
           error.style.color = "red";
           error.textContent = `Format salah: ${line}`;
           output.appendChild(error);

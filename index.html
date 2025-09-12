@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Portfolio</title>
+  <title>Miftah Parid | IT Technical Specialist</title>
   <style>
     /* Reset & base */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,6 +23,10 @@
     #about { text-align: center; }
     #about img { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 1rem; }
 
+    /* Skills */
+    #skills ul { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    #skills li { background: #fff; padding: 1rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,.1); }
+
     /* Portfolio grid */
     #portfolio { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
     .card { background: #fff; padding: 1rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,.1); transition: transform .2s; }
@@ -39,12 +43,13 @@
 </head>
 <body>
   <header>
-    <h1>John Doe</h1>
-    <p>Web Developer | Designer | Tech Enthusiast</p>
+    <h1>Miftah Parid</h1>
+    <p>IT Technical Specialist | System & Network Enthusiast</p>
   </header>
 
   <nav>
     <a href="#about">About</a>
+    <a href="#skills">Skills</a>
     <a href="#portfolio">Portfolio</a>
     <a href="#contact">Contact</a>
   </nav>
@@ -53,40 +58,52 @@
     <img src="https://via.placeholder.com/150" alt="Profile Picture" />
     <h2>About Me</h2>
     <p>
-      Hi, I'm John! I love building modern, responsive, and user-friendly websites.
-      Passionate about coding and design.
+      Hi, I'm <strong>Miftah</strong>, an IT Technical Specialist with experience in managing IT infrastructure, network troubleshooting, and supporting business-critical systems.  
+      I enjoy solving technical challenges, optimizing IT environments, and ensuring systems run smoothly and securely.
     </p>
   </section>
 
+  <section id="skills">
+    <h2 style="text-align:center;margin-bottom:1.5rem;">Core Skills</h2>
+    <ul>
+      <li>🔧 IT Support & Troubleshooting</li>
+      <li>🌐 Network Configuration & Monitoring</li>
+      <li>💻 Windows & Linux Server Administration</li>
+      <li>☁️ Cloud & Virtualization (VMware, Hyper-V)</li>
+      <li>🔒 IT Security & Endpoint Management</li>
+      <li>⚙️ Automation & Scripting (PowerShell, Bash)</li>
+    </ul>
+  </section>
+
   <section id="portfolio">
-    <h2 style="text-align:center;margin-bottom:1.5rem;">My Projects</h2>
+    <h2 style="text-align:center;margin-bottom:1.5rem;">Highlighted Projects</h2>
     <div class="card">
       <img src="https://via.placeholder.com/400x200" alt="Project 1" />
-      <h3>Project One</h3>
-      <p>Short description of project one.</p>
+      <h3>Network Optimization</h3>
+      <p>Designed and implemented optimized LAN/WAN configurations to improve performance and security.</p>
     </div>
     <div class="card">
       <img src="https://via.placeholder.com/400x200" alt="Project 2" />
-      <h3>Project Two</h3>
-      <p>Short description of project two.</p>
+      <h3>Server Deployment</h3>
+      <p>Deployed and maintained Windows/Linux servers with high availability and security standards.</p>
     </div>
     <div class="card">
       <img src="https://via.placeholder.com/400x200" alt="Project 3" />
-      <h3>Project Three</h3>
-      <p>Short description of project three.</p>
+      <h3>Automation Tools</h3>
+      <p>Developed scripts to automate routine IT tasks, reducing downtime and improving efficiency.</p>
     </div>
   </section>
 
   <section id="contact">
     <h2>Contact Me</h2>
-    <p>Feel free to reach out!</p>
-    <a href="mailto:yourmail@example.com">Email</a>
-    <a href="https://github.com/yourusername" target="_blank">GitHub</a>
-    <a href="https://linkedin.com/in/yourusername" target="_blank">LinkedIn</a>
+    <p>Let's connect and collaborate!</p>
+    <a href="mailto:miftah@example.com">📧 Email</a>
+    <a href="https://github.com/akode200" target="_blank">💻 GitHub</a>
+    <a href="https://linkedin.com/in/yourusername" target="_blank">🔗 LinkedIn</a>
   </section>
 
   <footer>
-    <p>&copy; 2025 John Doe. All rights reserved.</p>
+    <p>&copy; 2025 Miftah Parid. All rights reserved.</p>
   </footer>
 </body>
 </html>

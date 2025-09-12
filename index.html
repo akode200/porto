@@ -232,8 +232,6 @@
           <input type="file" id="fileInput" accept=".txt" class="form-control mb-3">
           
           <button class="btn btn-primary print-button mb-4" onclick="printLabel()">Print All Labels</button>
-
-          <h6 id="attribution" class="text-center mb-4">Print Label by MiftahParid Cirebon@2024</h6>
       </div>
   </div>
 
@@ -259,24 +257,6 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <script>
     let dataLines = [];
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const expectedText = "Print Label by MiftahParid Cirebon@2024";
-        const attribution = document.getElementById("attribution");
-        function validateAttribution() {
-            if (!attribution || attribution.textContent.trim() !== expectedText) {
-                alert("Error: Atribusi wajib telah diubah atau dihapus.");
-                document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:20%;'>Script dihentikan karena pelanggaran integritas.</h2>";
-                throw new Error("Attribution check failed.");
-            }
-        }
-        validateAttribution();
-        const observer = new MutationObserver(() => {
-            validateAttribution();
-        });
-        observer.observe(attribution, { childList: true, characterData: true, subtree: true });
-    });
-
     // Event saat file dipilih
     document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 
@@ -296,13 +276,6 @@
     }
 
     function generateAllLabels(lines) {
-        const attribution = document.getElementById("attribution");
-        const expectedText = "Print Label by MiftahParid Cirebon@2024";
-        if (!attribution || attribution.textContent.trim() !== expectedText) {
-            alert('Error: Atribusi wajib tidak ditemukan atau telah diubah.');
-            throw new Error('Attribution missing or modified.');
-        }
-
         const labelContainer = document.getElementById('labelContainer');
         labelContainer.innerHTML = '';
 

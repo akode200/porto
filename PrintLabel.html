@@ -25,75 +25,82 @@
     }
     textarea {
       width: 100%;
-      height: 150px;
-      margin-bottom: 1rem;
+      height: 200px;
       font-family: monospace;
       font-size: 14px;
-      padding: 0.5rem;
+      padding: 10px;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
     }
     button {
-      padding: 0.7rem 1.2rem;
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 10px;
       border: none;
+      border-radius: 6px;
       background: #007bff;
       color: white;
-      border-radius: 5px;
+      font-size: 14px;
       cursor: pointer;
     }
     button:hover {
       background: #0056b3;
     }
     #labelOutput {
+      margin-top: 2rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 2rem;
+      gap: 15px;
+      justify-content: center;
     }
     .label-container {
       width: 50.8mm;
       height: 35.7mm;
+      padding: 5px;
+      background: white;
       border: 1px solid #ccc;
-      padding: 4px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
+      justify-content: space-between;
+      border-radius: 6px;
       box-sizing: border-box;
+      page-break-after: always; /* tiap label jadi satu halaman PDF */
     }
     .logo-container {
       width: 100%;
-      display: flex;
-      justify-content: flex-start;
       margin-bottom: 2px;
     }
     .logo {
-      width: 30px;
-      height: auto;
+      width: 60%;
+      max-width: 80px;
     }
     .top-container {
       display: flex;
       align-items: center;
-      width: 100%;
+    }
+    .qrcode-container {
+      width: 30%;
+      display: flex;
+      justify-content: center;
+      margin-right: 5px;
     }
     .qrcode {
-      width: 30px;
-      height: 30px;
+      height: 40px;
+      width: 40px;
     }
     .text-container {
-      margin-left: 5px;
-    }
-    .barang {
-      font-size: 8pt;
-      font-weight: bold;
-      margin: 0;
-    }
-    .kodeFAOutput {
+      width: 70%;
       font-size: 7pt;
       font-weight: bold;
-      margin: 0;
+      line-height: 1.2;
+    }
+    .kodeFAOutput {
+      font-size: 6pt;
     }
     .lokasi {
       font-size: 7pt;
-      margin-top: 2px;
     }
     #attribution {
       margin-top: 2rem;
@@ -106,27 +113,21 @@
       color: #007bff;
       text-decoration: underline;
     }
+
+    /* Setting kertas untuk print */
+    @page {
+      size: 50.8mm 35.7mm; /* ukuran kertas label */
+      margin: 0;
+    }
     @media print {
-      @page {
-        size: 50.8mm 35.7mm;
-        margin: 0;
-      }
-      body {
-        margin: 0;
-        padding: 0;
-      }
-      .content {
-        display: none;
-      }
+      body { background: white; }
+      .content { display: none; } /* sembunyikan form input */
       #labelOutput {
+        display: block;
         margin: 0;
-        padding: 0;
-        gap: 0;
       }
       .label-container {
-        page-break-after: always;
-        border: none;
-        margin: 0;
+        border: none; /* hilangkan border saat print */
       }
     }
   </style>
@@ -135,78 +136,71 @@
   
   <div class="content">
     <h1>Print Label</h1>
-    <p>Masukkan data (format: NamaBarang[TAB]KodeFA[TAB]Lokasi), satu baris untuk setiap label.</p>
-    <textarea id="dataInput" placeholder="Contoh:&#10;KOMPUTER, LENOVO M70E[TAB]C 0097 0501 1107 00806[TAB]CIREBON-WAHIDIN"></textarea>
+    <p>Masukkan data manual (format: <b>NamaBarang [TAB] KodeFA [TAB] Lokasi</b> per baris):</p>
+    
+    <textarea id="manualInput" placeholder="Contoh:
+KOMPUTER, LENOVO M70E    C0097    CIREBON-WAHIDIN
+PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
+    
     <button onclick="generateLabels()">Generate Labels</button>
     <button onclick="window.print()">Print</button>
 
-    <!-- attribution -->
     <h6 id="attribution" class="text-center mb-4">
       Print Label by MiftahParid Cirebon@2025
     </h6>
   </div>
 
+  <!-- output label -->
   <div id="labelOutput"></div>
 
+  <!-- QRCode.js -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
     function generateLabels() {
-      const input = document.getElementById("dataInput").value.trim();
-      const lines = input.split("\n").map(l => l.trim()).filter(l => l);
+      const input = document.getElementById("manualInput").value.trim();
+      const output = document.getElementById("labelOutput");
+      output.innerHTML = "";
 
-      const labelOutput = document.getElementById("labelOutput");
-      labelOutput.innerHTML = "";
+      if (!input) {
+        alert("Mohon masukkan data terlebih dahulu.");
+        return;
+      }
 
+      const lines = input.split("\n");
       lines.forEach(line => {
-        const parts = line.split("\t");
+        const parts = line.split(/\t+/); // split by TAB
         if (parts.length === 3) {
           const [namaBarang, kodeFA, lokasi] = parts;
-
-          const labelDiv = document.createElement("div");
-          labelDiv.className = "label-container";
-
-          labelDiv.innerHTML = `
+          const label = document.createElement("div");
+          label.className = "label-container";
+          label.innerHTML = `
             <div class="logo-container">
               <img src="assets/images/Logo.png" alt="Logo" class="logo">
             </div>
             <div class="top-container">
-              <canvas class="qrcode"></canvas>
+              <div class="qrcode-container">
+                <canvas class="qrcode"></canvas>
+              </div>
               <div class="text-container">
-                <p class="barang">${namaBarang}</p>
-                <p class="kodeFAOutput">${kodeFA}</p>
+                <p>${namaBarang}</p>
+                <p class="kodeFAOutput"><b>${kodeFA}</b></p>
               </div>
             </div>
             <p class="lokasi">${lokasi}</p>
           `;
+          output.appendChild(label);
 
-          labelOutput.appendChild(labelDiv);
-
-          // Generate QR Code
-          const canvas = labelDiv.querySelector(".qrcode");
-          QRCode.toCanvas(canvas, kodeFA, { width: 30, height: 30 });
-        } else {
-          alert("Format salah: gunakan NamaBarang[TAB]KodeFA[TAB]Lokasi");
+          // generate QRCode
+          const canvas = label.querySelector(".qrcode");
+          QRCode.toCanvas(canvas, kodeFA, {
+            width: 40,
+            height: 40,
+            margin: 1,
+            color: { dark: "#000000", light: "#ffffff" }
+          });
         }
       });
     }
-
-    // Attribution check
-    document.addEventListener("DOMContentLoaded", function () {
-      const attribution = document.getElementById("attribution");
-      const expectedText = "Print Label by MiftahParid Cirebon@2025";
-      function normalizeText(text) {
-        return text.replace(/\s+/g, " ").trim();
-      }
-      if (!attribution || normalizeText(attribution.textContent) !== expectedText) {
-        document.body.innerHTML =
-          "<h2 style='color:red;text-align:center;margin-top:20%;'>Script dihentikan karena pelanggaran integritas.</h2>";
-        throw new Error("Attribution check failed.");
-      }
-      attribution.addEventListener("click", function () {
-        window.open("https://akode200.github.io/porto/", "_blank");
-      });
-    });
   </script>
 </body>
 </html>
-

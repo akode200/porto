@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JSON Formatter & Validator</title>
+  <style>
+    /* Base (matching Image Toolbox visual language) */
+    :root{
+      --bg:#f9fafb;
+      --card:#ffffff;
+      --muted:#4b5563;
+      --accent:#111827;
+      --border:#e5e7eb;
+      --success:#10b981;
+      --danger:#ef4444;
+    }
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial}
+    body{margin:0;background:var(--bg);color:#111827;-webkit-font-smoothing:antialiased}
+    header{background:var(--accent);color:#fff;padding:1rem;text-align:center}
+    header h1{margin:0;font-size:1.1rem}
+    header p{margin:4px 0 0;color:#c7d2fe;font-size:0.9rem}
+
+    .container{max-width:1000px;margin:24px auto;padding:16px}
+    .uploader{
+      background:var(--card);
+      border:2px dashed var(--border);
+      border-radius:10px;padding:18px;text-align:center;cursor:pointer;
+      transition:box-shadow .15s,border-color .15s;
+    }
+    .uploader.drag{border-color:var(--accent);box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+    .uploader small{display:block;margin-top:8px;color:var(--muted)}
+
+    .preview{margin-top:14px}
+    .tools{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:14px;
+    }
+    .card{
+      background:var(--card);
+      padding:12px;border-radius:10px;border:1px solid var(--border);
+      box-shadow:0 3px 8px rgba(16,24,40,0.04);
+    }
+
+    label{display:block;font-weight:600;margin-bottom:6px;color:var(--muted);font-size:0.9rem}
+    input[type=file]{display:none}
+    textarea{
+      width:100%;min-height:200px;padding:10px;border:1px solid var(--border);
+      border-radius:8px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace;
+      font-size:13px;resize:vertical;background:#f8fafc;color:#0f172a;
+    }
+    .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+    button{
+      background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;
+    }
+    button.ghost{background:transparent;color:var(--accent);border:1px solid var(--border);font-weight:600}
+    select,input[type=number]{padding:8px;border-radius:8px;border:1px solid var(--border);background:#fff}
+    .muted{color:var(--muted);font-size:0.9rem}
+
+    /* output highlight */
+    .output{
+      margin-top:8px;border-radius:8px;padding:12px;background:#0f1724;color:#e6eef6;min-height:200px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace;font-size:13px;overflow:auto;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .out-toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between}
+
+    /* small helpers */
+    .info{color:var(--muted);font-size:13px}
+    .error{color:var(--danger);font-weight:700}
+    .ok{color:var(--success);font-weight:700}
+
+    /* responsive */
+    @media (max-width:720px){
+      .controls{flex-direction:column;align-items:stretch}
+      header p{font-size:0.85rem}
+    }
+
+    /* JSON syntax colors (for highlighted output) */
+    .json-key{color:#f0abfc}       /* key */
+    .json-string{color:#a7f3d0}    /* string */
+    .json-number{color:#fca5a5}    /* number */
+    .json-boolean{color:#fef08a}   /* boolean */
+    .json-null{color:#9ca3af}      /* null */
+    .json-punct{color:#94a3b8}     /* punctuation */
+  </style>
+</head>
+<body>
+  <header>
+    <h1>JSON Formatter & Validator</h1>
+    <p>Drag & drop JSON file, paste or type — validate, pretty-print, minify, copy, download (client-side)</p>
+  </header>
+
+  <div class="container">
+    <!-- uploader -->
+    <div id="dropZone" class="uploader" tabindex="0">
+      <strong>📁 Drop JSON file here or click to choose</strong>
+      <small>Supports .json files or plain text paste. Max ~10MB in browser.</small>
+      <input id="fileInput" type="file" accept=".json,application/json,text/*">
+      <div id="fileInfo" class="muted" style="margin-top:8px"></div>
+    </div>
+
+    <div class="preview">
+      <div class="tools">
+
+        <!-- Input card -->
+        <div class="card">
+          <label for="inputArea">Input JSON (paste or type)</label>
+          <textarea id="inputArea" placeholder='{"hello": "world"}'></textarea>
+
+          <div class="controls">
+            <button id="btnValidate">Validate</button>
+            <button id="btnFormat">Format (Pretty)</button>
+            <button id="btnMinify">Minify</button>
+            <button id="btnClear" class="ghost">Clear</button>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+              <label class="muted" for="indent">Indent</label>
+              <select id="indent"><option value="2">2</option><option value="4">4</option></select>
+            </div>
+          </div>
+
+          <div style="margin-top:10px" class="muted">
+            Tip: Press <code>Ctrl+Enter</code> to format, <code>Ctrl+M</code> to minify.
+          </div>
+        </div>
+
+        <!-- Output card -->
+        <div class="card">
+          <div class="out-toolbar">
+            <div>
+              <label class="muted">Result</label>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button id="btnCopy" class="ghost">Copy</button>
+              <button id="btnDownload">Download .json</button>
+            </div>
+          </div>
+
+          <div id="status" style="margin-top:8px"></div>
+
+          <pre id="output" class="output" aria-live="polite"></pre>
+        </div>
+
+        <!-- Extras card -->
+        <div class="card">
+          <label>Quick actions</label>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button id="btnExample">Load Example JSON</button>
+            <button id="btnTree" class="ghost">Open Tree View (browser console)</button>
+            <div class="muted">You can also drag/drop a file or paste into the input area.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    const inputArea = document.getElementById('inputArea');
+    const btnValidate = document.getElementById('btnValidate');
+    const btnFormat = document.getElementById('btnFormat');
+    const btnMinify = document.getElementById('btnMinify');
+    const btnClear = document.getElementById('btnClear');
+    const output = document.getElementById('output');
+    const status = document.getElementById('status');
+    const indentSelect = document.getElementById('indent');
+    const btnCopy = document.getElementById('btnCopy');
+    const btnDownload = document.getElementById('btnDownload');
+    const btnExample = document.getElementById('btnExample');
+    const btnTree = document.getElementById('btnTree');
+
+    // Drag & drop handlers
+    dropZone.addEventListener('click', ()=> fileInput.click());
+    dropZone.addEventListener('dragover', (e)=> { e.preventDefault(); dropZone.classList.add('drag'); });
+    dropZone.addEventListener('dragleave', ()=> dropZone.classList.remove('drag'));
+    dropZone.addEventListener('drop', (e)=> {
+      e.preventDefault(); dropZone.classList.remove('drag');
+      const f = e.dataTransfer.files && e.dataTransfer.files[0];
+      if(f) handleFile(f);
+    });
+
+    fileInput.addEventListener('change', (e)=> {
+      const f = e.target.files && e.target.files[0];
+      if(f) handleFile(f);
+    });
+
+    function handleFile(file){
+      if(!file) return;
+      const name = file.name || 'file';
+      fileInfo.textContent = `Loaded: ${name} — ${(file.size/1024).toFixed(1)} KB`;
+      const reader = new FileReader();
+      reader.onload = () => {
+        inputArea.value = reader.result;
+        status.textContent = '';
+        renderOutput(''); // clear previous
+      };
+      reader.onerror = ()=> {
+        status.innerHTML = `<span class="error">Failed to read file</span>`;
+      }
+      reader.readAsText(file);
+    }
+
+    // Utility: try-parse JSON and return {ok,obj,error,pos}
+    function tryParseJSON(text){
+      try{
+        const obj = JSON.parse(text);
+        return { ok: true, obj };
+      }catch(err){
+        // try to extract position from message: "at position N"
+        const msg = err.message || String(err);
+        const m = msg.match(/position (\d+)/i) || msg.match(/at line (\d+) column (\d+)/i);
+        let pos = null, line = null, col = null;
+        if(m){
+          if(m[1] && msg.includes('position')) pos = parseInt(m[1],10);
+          if(m[1] && msg.includes('line')) { line = parseInt(m[1],10); col = parseInt(m[2],10); }
+        } else {
+          // some engines produce "Unexpected token ... in JSON at position 10"
+          const mm = msg.match(/at position\s+(\d+)/i) || msg.match(/position\s+(\d+)/i) || msg.match(/(\d+)\)$/);
+          if(mm) pos = parseInt(mm[1],10);
+        }
+        // compute line/col if we have pos
+        if(pos !== null){
+          const before = text.slice(0,pos);
+          const lines = before.split(/\r\n|\r|\n/);
+          line = lines.length;
+          col = lines[lines.length-1].length + 1;
+        }
+        return { ok:false, error: msg, pos, line, col };
+      }
+    }
+
+    // Syntax highlighter for JSON (basic)
+    function syntaxHighlight(jsonStr){
+      // escape
+      const esc = (s)=> s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      // tokens: strings, numbers, booleans, null, keys, punctuation
+      // We'll naive replace using regex (safe enough for displayed result)
+      let result = esc(jsonStr)
+        .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?)/g, function (match){
+          const cls = /:\s*$/.test(match) ? 'json-key' : 'json-string';
+          return `<span class="${cls}">${match}</span>`;
+        })
+        .replace(/\b(true|false)\b/g, '<span class="json-boolean">$1</span>')
+        .replace(/\b(null)\b/g, '<span class="json-null">$1</span>')
+        .replace(/(-?\d+(\.\d+)?([eE][+\-]?\d+)?)/g, '<span class="json-number">$1</span>');
+      return result;
+    }
+
+    // Render output safely (with highlight or plain)
+    function renderOutput(text, highlight=true){
+      if(!text){
+        output.innerHTML = '';
+        return;
+      }
+      if(highlight){
+        output.innerHTML = syntaxHighlight(text);
+      } else {
+        output.textContent = text;
+      }
+    }
+
+    // Actions
+    btnValidate.addEventListener('click', ()=> {
+      const txt = inputArea.value.trim();
+      if(!txt){ status.innerHTML = `<span class="error">No input to validate</span>`; renderOutput(''); return; }
+      const res = tryParseJSON(txt);
+      if(res.ok){
+        status.innerHTML = `<span class="ok">Valid JSON</span>`;
+        renderOutput(JSON.stringify(res.obj, null, parseInt(indentSelect.value,10)));
+      } else {
+        const where = res.line ? ` at line ${res.line}, column ${res.col}` : (res.pos !== null ? ` at position ${res.pos}` : '');
+        status.innerHTML = `<span class="error">Invalid JSON${where}: ${escapeHtml(res.error)}</span>`;
+        // show up to error position with marker
+        let display = txt;
+        if(res.pos !== null){
+          const idx = Math.min(res.pos, txt.length);
+          display = txt.slice(0, idx) + '\n\u274C <-- error here\n' + txt.slice(idx);
+        }
+        renderOutput(display, false);
+      }
+    });
+
+    btnFormat.addEventListener('click', ()=> {
+      const txt = inputArea.value.trim();
+      if(!txt){ status.innerHTML = `<span class="error">No input to format</span>`; renderOutput(''); return; }
+      const res = tryParseJSON(txt);
+      if(!res.ok){ status.innerHTML = `<span class="error">Cannot format — invalid JSON</span>`; renderOutput(txt,false); return; }
+      const pretty = JSON.stringify(res.obj, null, parseInt(indentSelect.value,10));
+      inputArea.value = pretty;
+      status.innerHTML = `<span class="ok">Formatted (indent ${indentSelect.value})</span>`;
+      renderOutput(pretty);
+    });
+
+    btnMinify.addEventListener('click', ()=> {
+      const txt = inputArea.value.trim();
+      if(!txt){ status.innerHTML = `<span class="error">No input to minify</span>`; renderOutput(''); return; }
+      const res = tryParseJSON(txt);
+      if(!res.ok){ status.innerHTML = `<span class="error">Cannot minify — invalid JSON</span>`; renderOutput(txt,false); return; }
+      const min = JSON.stringify(res.obj);
+      inputArea.value = min;
+      status.innerHTML = `<span class="ok">Minified</span>`;
+      renderOutput(min);
+    });
+
+    btnClear.addEventListener('click', ()=> {
+      inputArea.value = '';
+      renderOutput('');
+      status.textContent = '';
+      fileInfo.textContent = '';
+    });
+
+    // Keyboard shortcuts
+    inputArea.addEventListener('keydown', (e)=>{
+      if(e.ctrlKey && e.key === 'Enter'){ e.preventDefault(); btnFormat.click(); }
+      if(e.ctrlKey && (e.key === 'm' || e.key === 'M')){ e.preventDefault(); btnMinify.click(); }
+    });
+
+    // Copy result
+    btnCopy.addEventListener('click', async ()=>{
+      const txt = output.textContent || output.innerText || '';
+      if(!txt){ status.innerHTML = `<span class="error">Nothing to copy</span>`; return; }
+      try{
+        await navigator.clipboard.writeText(txt);
+        status.innerHTML = `<span class="ok">Copied to clipboard</span>`;
+      }catch(e){ status.innerHTML = `<span class="error">Copy failed (browser permissions)</span>`; }
+    });
+
+    // Download file (result)
+    btnDownload.addEventListener('click', ()=>{
+      const txt = output.textContent || output.innerText || '';
+      if(!txt){ status.innerHTML = `<span class="error">Nothing to download</span>`; return; }
+      const blob = new Blob([txt], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'data.json'; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      status.innerHTML = `<span class="ok">Download started</span>`;
+    });
+
+    // Example JSON
+    btnExample.addEventListener('click', ()=>{
+      const ex = {
+        name: "Example",
+        version: 1,
+        list: [
+          {id:1, text:"hello"},
+          {id:2, text:"world"}
+        ],
+        nested: { enabled: true, tags: null }
+      };
+      inputArea.value = JSON.stringify(ex, null, parseInt(indentSelect.value,10));
+      renderOutput(inputArea.value);
+      status.innerHTML = `<span class="ok">Example loaded</span>`;
+    });
+
+    // Tree view (prints object to console for inspection)
+    btnTree.addEventListener('click', ()=>{
+      const txt = inputArea.value.trim();
+      if(!txt){ status.innerHTML = `<span class="error">No input</span>`; return; }
+      const res = tryParseJSON(txt);
+      if(!res.ok){ status.innerHTML = `<span class="error">Invalid JSON — cannot show tree</span>`; return; }
+      console.log('JSON Tree View:', res.obj);
+      status.innerHTML = `<span class="ok">Tree logged to console</span>`;
+    });
+
+    // Helpers
+    function escapeHtml(s){
+      return (''+s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // init: empty
+    renderOutput('');
+  </script>
+</body>
+</html>

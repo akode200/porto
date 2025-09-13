@@ -149,6 +149,12 @@
 KOMPUTER, LENOVO M70E    C0097    CIREBON-WAHIDIN
 PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
     
+    <div>
+      <label>
+        <input type="checkbox" id="withLogo" checked> Tampilkan Logo
+      </label>
+    </div>
+    
     <button onclick="generateLabels()">Generate Labels</button>
     <button onclick="window.print()">Print</button>
 
@@ -161,7 +167,7 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
-    // Biarkan TAB menambah spasi di textarea, bukan pindah tombol
+    // Biarkan TAB menambah spasi di textarea
     document.getElementById("manualInput").addEventListener("keydown", function(e) {
       if (e.key === "Tab") {
         e.preventDefault();
@@ -180,6 +186,7 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
     function generateLabels() {
       const input = document.getElementById("manualInput").value.trim();
       const output = document.getElementById("labelOutput");
+      const withLogo = document.getElementById("withLogo").checked;
       output.innerHTML = "";
 
       if (!input) {
@@ -194,10 +201,12 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
           const [namaBarang, kodeFA, lokasi] = parts;
           const label = document.createElement("div");
           label.className = "label-container";
+          
           label.innerHTML = `
-            <div class="logo-container">
-              <img src="assets/images/Logo.png" alt="Logo" class="logo">
-            </div>
+            ${withLogo ? `
+              <div class="logo-container">
+                <img src="assets/images/Logo.png" alt="Logo" class="logo">
+              </div>` : ""}
             <div class="top-container">
               <div class="qrcode-container">
                 <canvas class="qrcode"></canvas>

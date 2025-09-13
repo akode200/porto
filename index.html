@@ -1,250 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Miftah Parid | IT Technical Specialist</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio - Miftah Parid</title>
   <style>
-    /* Reset & base */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; line-height: 1.6; background: #f9f9f9; color: #333; }
+    /* ===== Base Style ===== */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
+    }
 
-    header { background: #222; color: #fff; padding: 2rem 1rem; text-align: center; }
-    header h1 { font-size: 2.5rem; margin-bottom: .5rem; }
-    header p { font-size: 1.1rem; color: #aaa; }
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 1rem 0;
+      text-align: center;
+    }
 
-    nav { background: #333; padding: .5rem; text-align: center; }
-    nav a { color: #fff; margin: 0 1rem; text-decoration: none; font-weight: bold; }
-    nav a:hover { color: #ff9800; }
+    nav a {
+      color: #fff;
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
 
-    section { padding: 3rem 1rem; max-width: 900px; margin: auto; }
-
-    /* About */
-    #about { text-align: center; }
-    #about img { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 1rem; }
-
-    /* Skills */
-    #skills ul { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
-    #skills li { background: #fff; padding: 1rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,.1); }
-
-    /* Portfolio grid */
-    #portfolio { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
-    .card { background: #fff; padding: 1rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,.1); transition: transform .2s; }
-    .card:hover { transform: translateY(-5px); }
-    .card img { width: 100%; border-radius: 10px; }
-
-    /* Contact */
-    #contact { text-align: center; }
-    #contact a { display: inline-block; margin: .5rem; padding: .7rem 1.2rem; background: #222; color: #fff; border-radius: 5px; text-decoration: none; transition: background .2s; }
-    #contact a:hover { background: #ff9800; }
-
-    footer { text-align: center; padding: 1rem; background: #222; color: #aaa; margin-top: 2rem; }
-    /* Portfolio vertical list */
-    #portfolio {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      max-width: 800px;
+    section {
+      padding: 2rem;
+      max-width: 1000px;
       margin: auto;
     }
-  
-    #portfolio .card {
-      background: #fff;
+
+    h2 {
+      margin-top: 0;
+      color: var(--heading);
+    }
+
+    .card {
+      background: var(--card);
       padding: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,.1);
-      transition: transform .2s;
-    }
-  
-    #portfolio .card:hover {
-      transform: translateY(-5px);
-    }
-  
-    #portfolio .card img {
-      width: 25%;
-      border-radius: 10px;
-      margin: 0 auto 1rem;
-      display: block;
+      border-radius: 8px;
+      margin: 1rem 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background 0.3s, color 0.3s;
     }
 
-  
-    #portfolio h3 {
-      margin-bottom: .5rem;
-    }
-    /* Tools section styles */
-    .form-container {
-        margin: 0px auto;   
-        padding: 0px;
-        max-width: 500px;
-        background-color: white;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .label-container {
-        width: 100%;
-        max-width: 50.8mm;
-        height: 35mm;
-        padding-top: 10%;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .top-container {
-        display: flex;
-        width: 100%;
-        height: 100%;
-        align-items: center;
-    }
-    .qrcode-container {
-        width: 30%;
-        display: flex;
-        justify-content: center;
-        margin-right: 5px;
-    }
-    .text-container {
-        width: 80%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        font-weight: bold;
-    }
-    .text-container p {
-        margin: 0;
-        line-height: 1.1;
-    }
-    .kodeFAOutput {
-        text-align: justify;
-        font-size: 6pt;
-        font-weight: bold;
-    }
-    .barang, .lokasi {
-        text-align: left;
-        font-size: 7pt;
-        font-weight: bold;
-    }
-    .qrcode {
-        height: 40px;
-        width: 40px;
-        max-width: 100%;
-        max-height: 40px;
-    }
-    .print-button {
-        margin-top: 10px;
-    }
-    @media print {
-        @page {
-            size: 50.8mm 35mm;
-            margin: 0;
-        }
-        body {
-            margin: 0;
-            padding: 0;
-        }
-        .form-container {
-            display: none;
-        }
+    .card img {
+      max-width: 100%;
+      border-radius: 6px;
     }
 
+    footer {
+      background: var(--primary);
+      color: #fff;
+      text-align: center;
+      padding: 1rem 0;
+      margin-top: 2rem;
+    }
+
+    /* ===== Light Theme ===== */
+    :root {
+      --bg: #f9f9f9;
+      --text: #222;
+      --heading: #333;
+      --primary: #0066cc;
+      --card: #fff;
+    }
+
+    /* ===== Dark Theme ===== */
+    .dark-mode {
+      --bg: #121212;
+      --text: #e0e0e0;
+      --heading: #f1f1f1;
+      --primary: #0d47a1;
+      --card: #1e1e1e;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Miftah Parid</h1>
-    <p>IT Technical Specialist | System & Network Enthusiast</p>
+    <h1>Miftah Parid - Portfolio</h1>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#tools">Tools</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </header>
 
-  <nav>
-    <a href="#about">About</a>
-    <a href="#skills">Skills</a>
-    <a href="#portfolio">Portfolio</a>
-    <a href="#contact">Contact</a>
-    <a href="#tools">Tools</a>
-  </nav>
-
   <section id="about">
-    <img src="https://media.licdn.com/dms/image/v2/D5635AQGumy51JitjIA/profile-framedphoto-shrink_200_200/B56ZkbN2aeG0Ac-/0/1757098239953?e=1758301200&v=beta&t=9QdzB3DEph1SGQNgln-XkCIqcyCJSFrxXgpGKLaEfDk" />
     <h2>About Me</h2>
-    <p>
-      Hi, I'm <strong>Miftah</strong>, an IT Technical Specialist with experience in managing IT infrastructure, network troubleshooting, and supporting business-critical systems.  
-      I enjoy solving technical challenges, optimizing IT environments, and ensuring systems run smoothly and securely.
-    </p>
+    <p>Saya adalah IT Security & Technical Specialist dengan pengalaman dalam project jaringan, aplikasi, dan sistem pendukung keputusan. Berfokus pada solusi efisien, aman, dan scalable.</p>
   </section>
 
   <section id="skills">
-    <h2 style="text-align:center;margin-bottom:1.5rem;">Core Skills</h2>
+    <h2>Skills</h2>
     <ul>
-      <li>🔧 IT Support & Troubleshooting</li>
-      <li>🌐 Network Configuration & Monitoring</li>
-      <li>💻 Windows & Linux Server Administration</li>
-      <li>⚙️ Automation & Scripting (PowerShell, Bash)</li>
+      <li>Pentesting & IT Security</li>
+      <li>Network Infrastructure</li>
+      <li>PHP, MySQL, Web Development</li>
+      <li>Android App Development</li>
+      <li>Fuzzy AHP Decision Support Systems</li>
     </ul>
   </section>
 
-<section id="portfolio">
-  <h2 style="text-align:center;margin-bottom:1.5rem;">Highlighted Projects & Experiences</h2>
+  <section id="portfolio">
+    <h2>Portfolio</h2>
 
     <div class="card">
-    <img src="https://www.visionet.co.id/wp-content/uploads/2022/02/logo-vdi-new.png" alt="IT Technical Specialist" />
-    <h3>IT Technical Specialist</h3>
-    <p style="color:#777; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1rem;">
-      PT. Visionet Data Internasional — Assignment at PT. Adira Dinamika Multi Finance Tbk 
-    </p>
-    <p class="desc">
-        Worked as IT Technical Specialist for 2 years. Achieved <strong>98% SLA performance</strong>, managed over 200+ tickets/month, reduced average downtime by 30%, and improved response time under SLA.
-    </p>
-  </div>
-  
-  <div class="card">
-    <img src="assets/images/Apk.jpg" alt="Android Ticketing App" />
-    <h3>Android Ticketing Application</h3>
-    <p style="color:#777; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1rem;">
-      PT. Merdeka Media Teknologi - Pemalang (2023)
-    </p>
-    <p class="desc">
-        Developed an Android-based app for customer service ticketing & tracking. Integrated QR code check-in, real-time status updates, using Java & MySQL, with over 1,000 users adoption.
-    </p>
-  </div>
+      <h3>IT Technical Specialist - Visionet/Adira</h3>
+      <p>Menangani SLA ≥98%, mengelola aset IT dengan akurasi 98%, memastikan backup sukses ≥99%.</p>
+    </div>
 
-  <div class="card">
-    <img src="assets/images/MerdekaNet.jpg" alt="Network Project" />
-    <h3>Internet Infrastructure Project</h3>
-    <p style="color:#777; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1rem;">
-      PT. Merdeka Media Teknologi - Pemalang (2017)
-    </p>
-    <p class="desc">
-        Designed & built internet networks across all villages in the area. Led end-to-end installation, ensured 99% availability, deployed secure routing & firewall, finished within 6 months.
-    </p>
-  </div>
+    <div class="card">
+      <h3>Android Ticketing App</h3>
+      <p>Aplikasi tiket berbasis Android dengan integrasi server-side, user-friendly UI, dan durasi pengembangan 6 bulan.</p>
+      <img src="img/ticketing-app.png" alt="Ticketing App">
+    </div>
 
-</section>
-<section id="tools">
-  <h2 style="text-align:center;margin-bottom:1.5rem;">Tools</h2>
-  <div class="card">
-    <img src="assets/images/Logo.png" alt="Print Label" />
-    <h3>Print Label Generator</h3>
-    <p>
-      A web-based tool I built for generating and printing QR Code labels from asset data.  
-      Supports TXT file uploads and automated QR code generation.
-    </p>
-    <p>
-      <a href="PrintLabel.html" target="_blank" 
-         style="display:inline-block;padding:.5rem 1rem;background:#222;color:#fff;border-radius:5px;text-decoration:none;">
-         Open Tool
-      </a>
-    </p>
-  </div>
-</section>
+    <div class="card">
+      <h3>Internet Infrastructure Project (2017)</h3>
+      <p>Membangun jaringan internet di seluruh desa Kecamatan Bantarbolang, Pemalang, Indonesia.</p>
+      <img src="img/network-project.png" alt="Network Project">
+    </div>
+  </section>
+
+  <section id="tools">
+    <h2>Tools</h2>
+    <div class="card">
+      <h3>Print Label Generator</h3>
+      <p>Tool untuk mempermudah pembuatan label cetak berbasis web.</p>
+      <a href="#">Try It Here</a>
+    </div>
+  </section>
 
   <section id="contact">
     <h2>Contact Me</h2>
-    <p>Let's connect and collaborate!</p>
     <a href="mailto:miftahparid019@gmail.com">📧 Email</a>
     <a href="https://github.com/akode200" target="_blank">💻 GitHub</a>
     <a href="https://linkedin.com/in/miftahparid" target="_blank">🔗 LinkedIn</a>
   </section>
 
   <footer>
-    <p>&copy; 2025 Miftah Parid. All rights reserved.</p>
+    <p>© 2025 Miftah Parid. All rights reserved.</p>
   </footer>
 
+  <script>
+    // ===== Auto Dark Mode Based on Time =====
+    const hour = new Date().getHours();
+    if (hour >= 18 || hour < 6) { // jam 6 sore - 6 pagi
+      document.body.classList.add('dark-mode');
+    }
+  </script>
 </body>
 </html>

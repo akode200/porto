@@ -168,71 +168,73 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
-    // Biarkan TAB menambah spasi di textarea
-    document.getElementById("manualInput").addEventListener("keydown", function(e) {
-      if (e.key === "Tab") {
-        e.preventDefault();
-        const start = this.selectionStart;
-        const end = this.selectionEnd;
-        this.value = this.value.substring(0, start) + "\t" + this.value.substring(end);
-        this.selectionStart = this.selectionEnd = start + 1;
-      }
-    });
-
-    // Attribution bisa diklik
-    document.getElementById("attribution").addEventListener("click", function() {
-      window.open("https://akode200.github.io/porto/", "_blank");
-    });
-
-    function generateLabels() {
-      const input = document.getElementById("manualInput").value.trim();
-      const output = document.getElementById("labelOutput");
-      const withLogo = document.getElementById("withLogo").checked;
-      output.innerHTML = "";
-
-      if (!input) {
-        alert("Mohon masukkan data terlebih dahulu.");
-        return;
-      }
-
-      const lines = input.split("\n");
-      lines.forEach(line => {
-        const parts = line.split(/\t+/); 
-        if (parts.length === 3) {
-          const [namaBarang, kodeFA, lokasi] = parts;
-          const label = document.createElement("div");
-          label.className = "label-container";
-          
-          // tetap ada container logo, gambar kosong kalau tidak dicentang
-          const logoSrc = withLogo ? "assets/images/Logo.png" : "";
-          
-          label.innerHTML = `
-            <div class="logo-container">
-              <img src="${logoSrc}" alt="Logo" class="logo">
-            </div>
-            <div class="top-container">
-              <div class="qrcode-container">
-                <canvas class="qrcode"></canvas>
-              </div>
-              <div class="text-container">
-                <p>${namaBarang}</p>
-                <p class="kodeFAOutput"><b>${kodeFA}</b></p>
-              </div>
-            </div>
-            <p class="lokasi">${lokasi}</p>
-          `;
-          output.appendChild(label);
-
-          const canvas = label.querySelector(".qrcode");
-          QRCode.toCanvas(canvas, kodeFA, {
-            width: 40,
-            height: 40,
-            margin: 1,
-            color: { dark: "#000000", light: "#ffffff" }
-          });
-        }
-      });
+  // Biarkan TAB menambah spasi di textarea
+  document.getElementById("manualInput").addEventListener("keydown", function(e) {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const start = this.selectionStart;
+      const end = this.selectionEnd;
+      this.value = this.value.substring(0, start) + "\t" + this.value.substring(end);
+      this.selectionStart = this.selectionEnd = start + 1;
     }
-  </script>
+  });
+
+  // Attribution bisa diklik
+  document.getElementById("attribution").addEventListener("click", function() {
+    window.open("https://akode200.github.io/porto/", "_blank");
+  });
+
+  function generateLabels() {
+    const input = document.getElementById("manualInput").value.trim();
+    const output = document.getElementById("labelOutput");
+    const withLogo = document.getElementById("withLogo").checked;
+    output.innerHTML = "";
+
+    if (!input) {
+      alert("Mohon masukkan data terlebih dahulu.");
+      return;
+    }
+
+    const lines = input.split("\n");
+    lines.forEach(line => {
+      const parts = line.split(/\t+/); 
+      if (parts.length === 3) {
+        const [namaBarang, kodeFA, lokasi] = parts;
+        const label = document.createElement("div");
+        label.className = "label-container";
+        
+        // tetap ada container logo, hanya src yang dikosongkan
+        const logoSrc = withLogo ? "assets/images/Logo.png" : "";
+
+        label.innerHTML = `
+          <div class="logo-container">
+            <img src="${logoSrc}" alt="Logo" class="logo">
+          </div>
+          <div class="top-container">
+            <div class="qrcode-container">
+              <canvas class="qrcode"></canvas>
+            </div>
+            <div class="text-container">
+              <p>${namaBarang}</p>
+              <p class="kodeFAOutput"><b>${kodeFA}</b></p>
+            </div>
+          </div>
+          <p class="lokasi">${lokasi}</p>
+        `;
+        output.appendChild(label);
+
+        const canvas = label.querySelector(".qrcode");
+        QRCode.toCanvas(canvas, kodeFA, {
+          width: 40,
+          height: 40,
+          margin: 1,
+          color: { dark: "#000000", light: "#ffffff" }
+        });
+      }
+    });
+  }
+</script>
+
 </body>
 </html>
+

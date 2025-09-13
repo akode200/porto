@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Code Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f2f5;
+      padding: 2rem;
+    }
+    #qrcode {
+      margin-top: 1.5rem;
+    }
+    input, button {
+      padding: 0.5rem;
+      margin: 0.5rem;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h2>QR Code Generator</h2>
+  <input type="text" id="text" placeholder="Enter URL or text" size="40">
+  <button onclick="generateQR()">Generate QR</button>
+  <button onclick="openLink()">Open Link</button>
+
+  <div id="qrcode"></div>
+
+  <!-- qrcode.js library (dibundle dari CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    let qr;
+
+    function generateQR() {
+      const text = document.getElementById("text").value.trim();
+      if (!text) return alert("Please enter text or URL");
+
+      document.getElementById("qrcode").innerHTML = ""; // reset
+      qr = new QRCode(document.getElementById("qrcode"), {
+        text: text,
+        width: 200,
+        height: 200,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+    }
+
+    function openLink() {
+      const text = document.getElementById("text").value.trim();
+      if (text) window.open(text, "_blank");
+      else alert("No URL entered");
+    }
+  </script>
+</body>
+</html>

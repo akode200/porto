@@ -32,6 +32,21 @@
     .matches{white-space:pre-wrap;font-family:ui-monospace,monospace;margin-top:8px}
     footer{margin-top:14px;color:var(--muted);font-size:12px;text-align:center}
     @media(max-width:900px){.grid{grid-template-columns:1fr}.wrap{padding:12px}}
+    /* styling select agar dropdown gelap */
+    select {
+      background-color: #0b1220; /* warna background gelap */
+      color: #e6eef6;           /* warna teks terang */
+      border: 1px solid rgba(255,255,255,0.2);
+      appearance: none;         /* hilangkan style bawaan browser (opsional) */
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+    
+    /* styling item di dropdown */
+    select option {
+      background-color: #0b1220; /* hitam/gelap */
+      color: #e6eef6;           /* putih terang */
+    }
   </style>
 </head>
 <body>

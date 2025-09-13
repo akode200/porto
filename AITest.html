@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Agent Demo</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; }
+    input { width: 80%; padding: 5px; }
+    button { padding: 5px 10px; }
+  </style>
+</head>
+<body>
+  <h2>AI Agent (GitHub Pages)</h2>
+  <div id="chat"></div>
+  <input id="input" placeholder="Ketik pesan..." />
+  <button onclick="send()">Kirim</button>
+
+  <script>
+    const chatBox = document.getElementById("chat");
+
+    async function send() {
+      const input = document.getElementById("input");
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      addMessage("You", userText);
+      input.value = "";
+
+      // Tool sederhana: kalkulator
+      if (userText.toLowerCase().startsWith("hitung")) {
+        try {
+          const expr = userText.replace("hitung", "").trim();
+          const result = eval(expr);
+          addMessage("Agent", "Hasilnya adalah " + result);
+          return;
+        } catch {
+          addMessage("Agent", "Ekspresi tidak valid.");
+          return;
+        }
+      }
+
+      // Panggil OpenAI API (butuh API Key)
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer API_KEY_KAMU"
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: userText }]
+        })
+      });
+      const data = await response.json();
+      const reply = data.choices[0].message.content;
+      addMessage("Agent", reply);
+    }
+
+    function addMessage(sender, text) {
+      chatBox.innerHTML += `<p><b>${sender}:</b> ${text}</p>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>

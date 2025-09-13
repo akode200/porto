@@ -5,60 +5,145 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Miftah Parid | IT Technical Specialist</title>
   <style>
-    /* ===== Reset & Base Styles ===== */
+    /* Reset & base */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, sans-serif; line-height: 1.6; background: #f5f7fa; color: #333; }
-    img { max-width: 100%; display: block; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; background: #f9f9f9; color: #333; }
 
-    a { color: inherit; text-decoration: none; }
+    header { background: #222; color: #fff; padding: 2rem 1rem; text-align: center; }
+    header h1 { font-size: 2.5rem; margin-bottom: .5rem; }
+    header p { font-size: 1.1rem; color: #aaa; }
 
-    /* ===== Header ===== */
-    header { background: linear-gradient(135deg, #222, #444); color: #fff; padding: 3rem 1rem; text-align: center; }
-    header h1 { font-size: 3rem; margin-bottom: .3rem; }
-    header p { font-size: 1.2rem; color: #ccc; }
-
-    /* ===== Nav ===== */
-    nav { background: #333; padding: .8rem; text-align: center; position: sticky; top: 0; z-index: 100; }
-    nav a { color: #fff; margin: 0 .8rem; font-weight: bold; transition: color .2s; }
+    nav { background: #333; padding: .5rem; text-align: center; }
+    nav a { color: #fff; margin: 0 1rem; text-decoration: none; font-weight: bold; }
     nav a:hover { color: #ff9800; }
 
-    /* ===== Sections ===== */
-    section { padding: 3rem 1rem; max-width: 1000px; margin: auto; }
-    section h2 { margin-bottom: 1.5rem; font-size: 2rem; color: #222; text-align: center; border-bottom: 2px solid #eee; padding-bottom: .5rem; }
+    section { padding: 3rem 1rem; max-width: 900px; margin: auto; }
 
-    /* ===== About ===== */
+    /* About */
     #about { text-align: center; }
-    #about img { width: 160px; height: 160px; border-radius: 50%; margin: 0 auto 1.2rem; border: 3px solid #ddd; }
+    #about img { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 1rem; }
 
-    /* ===== Skills ===== */
-    #skills ul { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; margin-top: 1rem; }
-    #skills li { background: #fff; padding: 1.2rem; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,.08); font-weight: 500; }
+    /* Skills */
+    #skills ul { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    #skills li { background: #fff; padding: 1rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,.1); }
 
-    /* ===== Portfolio ===== */
-    #portfolio { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.8rem; }
-    .card { background: #fff; padding: 1.2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.08); transition: transform .2s; }
+    /* Portfolio grid */
+    #portfolio { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+    .card { background: #fff; padding: 1rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,.1); transition: transform .2s; }
     .card:hover { transform: translateY(-5px); }
-    .card h3 { margin-bottom: .6rem; color: #444; }
-    .card p.meta { font-size: .9rem; color: #777; margin-bottom: .8rem; }
-    .card p.desc { font-size: .95rem; color: #555; line-height: 1.4; }
+    .card img { width: 100%; border-radius: 10px; }
 
-    /* ===== Tools ===== */
-    #tools .tool-card { max-width: 450px; margin: auto; }
-
-    /* ===== Contact ===== */
+    /* Contact */
     #contact { text-align: center; }
-    #contact a { display: inline-block; margin: .5rem; padding: .8rem 1.3rem; background: #222; color: #fff; border-radius: 5px; transition: background .2s; }
+    #contact a { display: inline-block; margin: .5rem; padding: .7rem 1.2rem; background: #222; color: #fff; border-radius: 5px; text-decoration: none; transition: background .2s; }
     #contact a:hover { background: #ff9800; }
 
-    /* ===== Footer ===== */
-    footer { text-align: center; padding: 1rem; background: #222; color: #ccc; margin-top: 2rem; font-size: .9rem; }
-
-    /* ===== Responsiveness ===== */
-    @media (max-width: 768px) {
-      header h1 { font-size: 2.4rem; }
-      #skills ul { grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); }
-      #portfolio { grid-template-columns: 1fr; }
+    footer { text-align: center; padding: 1rem; background: #222; color: #aaa; margin-top: 2rem; }
+    /* Portfolio vertical list */
+    #portfolio {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 800px;
+      margin: auto;
     }
+  
+    #portfolio .card {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.1);
+      transition: transform .2s;
+    }
+  
+    #portfolio .card:hover {
+      transform: translateY(-5px);
+    }
+  
+    #portfolio .card img {
+      width: 25%;
+      border-radius: 10px;
+      margin: 0 auto 1rem;
+      display: block;
+    }
+
+  
+    #portfolio h3 {
+      margin-bottom: .5rem;
+    }
+    /* Tools section styles */
+    .form-container {
+        margin: 0px auto;   
+        padding: 0px;
+        max-width: 500px;
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .label-container {
+        width: 100%;
+        max-width: 50.8mm;
+        height: 35mm;
+        padding-top: 10%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .top-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+    }
+    .qrcode-container {
+        width: 30%;
+        display: flex;
+        justify-content: center;
+        margin-right: 5px;
+    }
+    .text-container {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        font-weight: bold;
+    }
+    .text-container p {
+        margin: 0;
+        line-height: 1.1;
+    }
+    .kodeFAOutput {
+        text-align: justify;
+        font-size: 6pt;
+        font-weight: bold;
+    }
+    .barang, .lokasi {
+        text-align: left;
+        font-size: 7pt;
+        font-weight: bold;
+    }
+    .qrcode {
+        height: 40px;
+        width: 40px;
+        max-width: 100%;
+        max-height: 40px;
+    }
+    .print-button {
+        margin-top: 10px;
+    }
+    @media print {
+        @page {
+            size: 50.8mm 35mm;
+            margin: 0;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .form-container {
+            display: none;
+        }
+    }
+
   </style>
 </head>
 <body>
@@ -71,20 +156,21 @@
     <a href="#about">About</a>
     <a href="#skills">Skills</a>
     <a href="#portfolio">Portfolio</a>
-    <a href="#tools">Tools</a>
     <a href="#contact">Contact</a>
+    <a href="#tools">Tools</a>
   </nav>
 
   <section id="about">
-    <img src="https://media.licdn.com/dms/image/v2/D5635AQGumy51JitjIA/profile-framedphoto-shrink_200_200/B56ZkbN2aeG0Ac-/0/1757098239953?e=1758301200&v=beta&t=9QdzB3DEph1SGQNgln-XkCIqcyCJSFrxXgpGKLaEfDk" alt="Profile Photo" />
+    <img src="https://media.licdn.com/dms/image/v2/D5635AQGumy51JitjIA/profile-framedphoto-shrink_200_200/B56ZkbN2aeG0Ac-/0/1757098239953?e=1758301200&v=beta&t=9QdzB3DEph1SGQNgln-XkCIqcyCJSFrxXgpGKLaEfDk" />
     <h2>About Me</h2>
     <p>
-      Hi, I'm <strong>Miftah</strong>, an IT Technical Specialist with experience managing IT infrastructure, network troubleshooting, and supporting business-critical systems. I enjoy solving technical challenges, optimizing environments, and ensuring stable, secure operations.
+      Hi, I'm <strong>Miftah</strong>, an IT Technical Specialist with experience in managing IT infrastructure, network troubleshooting, and supporting business-critical systems.  
+      I enjoy solving technical challenges, optimizing IT environments, and ensuring systems run smoothly and securely.
     </p>
   </section>
 
   <section id="skills">
-    <h2>Core Skills</h2>
+    <h2 style="text-align:center;margin-bottom:1.5rem;">Core Skills</h2>
     <ul>
       <li>🔧 IT Support & Troubleshooting</li>
       <li>🌐 Network Configuration & Monitoring</li>
@@ -93,51 +179,60 @@
     </ul>
   </section>
 
-  <section id="portfolio">
-    <h2>Highlighted Projects & Experiences</h2>
+<section id="portfolio">
+  <h2 style="text-align:center;margin-bottom:1.5rem;">Highlighted Projects & Experiences</h2>
 
     <div class="card">
-      <h3>IT Technical Specialist</h3>
-      <p class="meta">PT. Visionet Data Internasional — Assignment at PT. Adira Dinamika Multi Finance Tbk</p>
-      <p class="desc">
+    <img src="https://www.visionet.co.id/wp-content/uploads/2022/02/logo-vdi-new.png" alt="IT Technical Specialist" />
+    <h3>IT Technical Specialist</h3>
+    <p style="color:#777; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1rem;">
+      PT. Visionet Data Internasional — Assignment at PT. Adira Dinamika Multi Finance Tbk 
+    </p>
+    <p class="desc">
         Worked as IT Technical Specialist for 2 years. Achieved <strong>98% SLA performance</strong>, managed over 200+ tickets/month, reduced average downtime by 30%, and improved response time under SLA.
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>Android Ticketing Application</h3>
-      <p class="meta">PT. Merdeka Media Teknologi ‒ Pemalang (2023)</p>
-      <p class="desc">
+    </p>
+  </div>
+  
+  <div class="card">
+    <img src="assets/images/Apk.jpg" alt="Android Ticketing App" />
+    <h3>Android Ticketing Application</h3>
+    <p class="meta">PT. Merdeka Media Teknologi ‒ Pemalang (2023)</p>
+    <p class="desc">
         Developed an Android-based app for customer service ticketing & tracking. Integrated QR code check-in, real-time status updates, using Java & MySQL, with over 1,000 users adoption.
-      </p>
-    </div>
+    </p>
+  </div>
 
-    <div class="card">
-      <h3>Internet Infrastructure Project</h3>
-      <p class="meta">Bantarbolang Subdistrict, Pemalang (2017)</p>
-      <p class="desc">
+  <div class="card">
+    <img src="assets/images/MerdekaNet.jpg" alt="Network Project" />
+    <h3>Internet Infrastructure Project</h3>
+    <p class="meta">PT. Merdeka Media Teknologi ‒ Pemalang (2017)</p>
+    <p class="desc">
         Designed & built internet networks across all villages in the area. Led end-to-end installation, ensured 99% availability, deployed secure routing & firewall, finished within 6 months.
-      </p>
-    </div>
+    </p>
+  </div>
 
-  </section>
-
-  <section id="tools">
-    <h2>Tools & Projects</h2>
-    <div class="card tool-card">
-      <h3>Print Label Generator Tool</h3>
-      <p class="desc">
-        Web-based tool for generating & printing QR label tags for assets. Supports TXT uploads, batch processing, and output formatting for label printing.
-      </p>
-      <p>
-        <a href="https://github.com/akode200">View Source on GitHub</a>
-      </p>
-    </div>
-  </section>
+</section>
+<section id="tools">
+  <h2 style="text-align:center;margin-bottom:1.5rem;">Tools</h2>
+  <div class="card">
+    <img src="assets/images/Logo.png" alt="Print Label" />
+    <h3>Print Label Generator</h3>
+    <p>
+      A web-based tool I built for generating and printing QR Code labels from asset data.  
+      Supports TXT file uploads and automated QR code generation.
+    </p>
+    <p>
+      <a href="PrintLabel.html" target="_blank" 
+         style="display:inline-block;padding:.5rem 1rem;background:#222;color:#fff;border-radius:5px;text-decoration:none;">
+         Open Tool
+      </a>
+    </p>
+  </div>
+</section>
 
   <section id="contact">
     <h2>Contact Me</h2>
-    <p>Let's connect & collaborate!</p>
+    <p>Let's connect and collaborate!</p>
     <a href="mailto:miftahparid019@gmail.com">📧 Email</a>
     <a href="https://github.com/akode200" target="_blank">💻 GitHub</a>
     <a href="https://linkedin.com/in/miftahparid" target="_blank">🔗 LinkedIn</a>
@@ -146,5 +241,6 @@
   <footer>
     <p>&copy; 2025 Miftah Parid. All rights reserved.</p>
   </footer>
+
 </body>
 </html>

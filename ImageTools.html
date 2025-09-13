@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Toolbox</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f9fafb;
+      color: #222;
+    }
+    header {
+      text-align: center;
+      padding: 1rem;
+      background: #222;
+      color: #fff;
+    }
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    .uploader {
+      border: 2px dashed #bbb;
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      background: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .uploader:hover {
+      border-color: #333;
+    }
+    .preview {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+    .preview img {
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .tools {
+      margin-top: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+      gap: 1rem;
+    }
+    .card {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    label { display:block; margin-bottom: .3rem; font-weight: bold; }
+    input, select {
+      width: 100%;
+      padding: .5rem;
+      margin-bottom: .8rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      display: inline-block;
+      padding: .6rem 1rem;
+      margin: .2rem;
+      border: none;
+      border-radius: 5px;
+      background: #222;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover { background: #444; }
+    .output {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: .5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: .9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🖼️ Image Toolbox</h1>
+    <p>Resize, Compress, Convert & Export images – all in your browser</p>
+  </header>
+
+  <div class="container">
+    <!-- Upload -->
+    <div class="uploader" id="dropZone">
+      <p>📂 Drag & drop or click to upload image</p>
+      <input type="file" id="fileInput" accept="image/*" hidden>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview" id="preview"></div>
+
+    <!-- Tools -->
+    <div class="tools">
+      <div class="card">
+        <h3>Resize</h3>
+        <label>Width (px)</label>
+        <input type="number" id="resizeWidth" placeholder="e.g. 600">
+        <label>Height (px)</label>
+        <input type="number" id="resizeHeight" placeholder="e.g. 400">
+        <button onclick="applyResize()">Apply Resize</button>
+      </div>
+
+      <div class="card">
+        <h3>Compress</h3>
+        <label>Quality (0.1 - 1)</label>
+        <input type="number" id="quality" min="0.1" max="1" step="0.1" value="0.8">
+        <button onclick="applyCompress()">Apply Compression</button>
+      </div>
+
+      <div class="card">
+        <h3>Convert Format</h3>
+        <label>Select Format</label>
+        <select id="format">
+          <option value="image/png">PNG</option>
+          <option value="image/jpeg">JPG</option>
+          <option value="image/webp">WEBP</option>
+        </select>
+        <button onclick="applyConvert()">Convert & Download</button>
+      </div>
+
+      <div class="card">
+        <h3>Export as Base64</h3>
+        <button onclick="exportBase64()">Generate Base64</button>
+        <textarea id="base64Output" readonly></textarea>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="output">
+      <button onclick="downloadImage()">⬇️ Download Image</button>
+      <button onclick="resetTool()">🔄 Reset</button>
+    </div>
+  </div>
+
+  <script>
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    const preview = document.getElementById("preview");
+    let canvas = document.createElement("canvas");
+    let ctx = canvas.getContext("2d");
+    let currentImage = null;
+
+    // Drag & Drop
+    dropZone.addEventListener("click", ()=> fileInput.click());
+    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.style.borderColor="#222"; });
+    dropZone.addEventListener("dragleave", ()=> dropZone.style.borderColor="#bbb");
+    dropZone.addEventListener("drop", e=>{
+      e.preventDefault();
+      dropZone.style.borderColor="#bbb";
+      handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener("change", e=> handleFile(e.target.files[0]));
+
+    function handleFile(file){
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = e=>{
+        const img = new Image();
+        img.onload = ()=>{
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img,0,0);
+          currentImage = img;
+          renderPreview();
+        }
+        img.src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+
+    function renderPreview(){
+      preview.innerHTML = `<img src="${canvas.toDataURL()}" alt="preview">`;
+    }
+
+    function applyResize(){
+      if(!currentImage) return;
+      const w = parseInt(document.getElementById("resizeWidth").value)||currentImage.width;
+      const h = parseInt(document.getElementById("resizeHeight").value)||currentImage.height;
+      canvas.width = w;
+      canvas.height = h;
+      ctx.drawImage(currentImage,0,0,w,h);
+      currentImage.src = canvas.toDataURL();
+      renderPreview();
+    }
+
+    function applyCompress(){
+      if(!currentImage) return;
+      const q = parseFloat(document.getElementById("quality").value)||0.8;
+      const format = "image/jpeg";
+      const dataUrl = canvas.toDataURL(format,q);
+      const img = new Image();
+      img.onload = ()=>{
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img,0,0);
+        currentImage = img;
+        renderPreview();
+      }
+      img.src = dataUrl;
+    }
+
+    function applyConvert(){
+      if(!currentImage) return;
+      const format = document.getElementById("format").value;
+      const dataUrl = canvas.toDataURL(format,1.0);
+      downloadData(dataUrl,"converted."+format.split("/")[1]);
+    }
+
+    function exportBase64(){
+      if(!currentImage) return;
+      document.getElementById("base64Output").value = canvas.toDataURL();
+    }
+
+    function downloadImage(){
+      if(!currentImage) return;
+      const dataUrl = canvas.toDataURL("image/png");
+      downloadData(dataUrl,"image.png");
+    }
+
+    function downloadData(dataUrl, filename){
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = filename;
+      a.click();
+    }
+
+    function resetTool(){
+      preview.innerHTML="";
+      currentImage=null;
+      canvas.width=0;canvas.height=0;
+    }
+  </script>
+</body>
+</html>

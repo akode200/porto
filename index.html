@@ -47,7 +47,34 @@
       max-width: 800px;
       margin: auto;
     }
-  
+    /* Tools grid */
+    #tools {
+      max-width: 900px;
+      margin: auto;
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    #tools .card {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.1);
+      transition: transform .2s;
+    }
+    
+    #tools .card:hover {
+      transform: translateY(-5px);
+    }
+    
+    #tools .card img {
+      width: 60px;
+      height: auto;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
     #portfolio .card {
       background: #fff;
       padding: 1rem;
@@ -130,19 +157,12 @@
     .print-button {
         margin-top: 10px;
     }
-    @media print {
-        @page {
-            size: 50.8mm 35mm;
-            margin: 0;
+    @media (max-width: 600px) {
+        #tools {
+          grid-template-columns: 1fr; /* 1 kolom di layar kecil */
         }
-        body {
-            margin: 0;
-            padding: 0;
-        }
-        .form-container {
-            display: none;
-        }
-    }
+      }
+
 
   </style>
 </head>

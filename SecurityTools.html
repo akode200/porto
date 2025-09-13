@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Security / Pentest Tools (Client-side)</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--muted:#9aa4b2;--accent:#7dd3fc;--glass:rgba(255,255,255,0.03)}
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071026 0%, #0b1220 100%);color:#e6eef6}
+    .wrap{max-width:1100px;margin:28px auto;padding:20px}
+    header{display:flex;gap:16px;align-items:center;margin-bottom:18px}
+    header h1{font-size:18px;margin:0}
+    header p{margin:0;color:var(--muted);font-size:13px}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+    .card h2{margin:0 0 10px 0;font-size:14px}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input[type=text], input[type=password], textarea, select{width:100%;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit;font-size:13px}
+    textarea{min-height:88px;resize:vertical}
+    .row{display:flex;gap:8px}
+    button{background:linear-gradient(90deg,var(--accent),#60a5fa);border:none;padding:8px 12px;border-radius:8px;color:#042033;cursor:pointer;font-weight:600}
+    .muted{color:var(--muted);font-size:13px}
+    .output{background:#031023;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);min-height:52px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace;font-size:13px;color:#cfefff}
+    .tools-list{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+    .tool-btn{padding:8px 10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);cursor:pointer;color:var(--muted)}
+    .tool-btn.active{background:linear-gradient(90deg,#092230,rgba(125,211,252,0.05));border-color:rgba(125,211,252,0.18);color:var(--accent)}
+    .small{font-size:12px}
+    .help{font-size:12px;color:var(--muted);margin-top:8px}
+    .full{grid-column:1 / -1}
+    .flex-between{display:flex;align-items:center;justify-content:space-between}
+    .matches{white-space:pre-wrap;font-family:ui-monospace,monospace;margin-top:8px}
+    footer{margin-top:14px;color:var(--muted);font-size:12px;text-align:center}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}.wrap{padding:12px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Security / Pentest Tools — Client-side</h1>
+        <p>MD5 | SHA1 | SHA256 | JWT decoder | Base64 | Regex tester | URL encode/decode</p>
+      </div>
+      <div style="margin-left:auto" class="muted small">All operations happen locally in your browser.</div>
+    </header>
+
+    <div class="card full">
+      <div class="tools-list" id="toolButtons">
+        <button class="tool-btn active" data-tool="hash">Hash generator</button>
+        <button class="tool-btn" data-tool="jwt">JWT decoder</button>
+        <button class="tool-btn" data-tool="b64">Base64</button>
+        <button class="tool-btn" data-tool="regex">Regex tester</button>
+        <button class="tool-btn" data-tool="url">URL encode/decode</button>
+      </div>
+
+      <!-- Hash generator -->
+      <div id="hash" class="tool">
+        <h2>Hash generator</h2>
+        <label>Input</label>
+        <textarea id="hashInput" placeholder="Masukkan teks atau paste file content..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+          <select id="hashAlgo">
+            <option value="md5">MD5</option>
+            <option value="sha1">SHA-1</option>
+            <option value="sha256" selected>SHA-256</option>
+          </select>
+          <button id="hashBtn">Generate</button>
+          <button id="hashClear" class="small">Clear</button>
+        </div>
+        <div style="margin-top:10px">
+          <label>Result</label>
+          <div id="hashOutput" class="output"></div>
+        </div>
+        <p class="help">MD5 disediakan untuk kompatibilitas. Untuk integritas gunakan SHA-256.</p>
+      </div>
+
+      <!-- JWT -->
+      <div id="jwt" class="tool" style="display:none">
+        <h2>JWT decoder</h2>
+        <label>JWT (paste token)</label>
+        <input type="text" id="jwtInput" placeholder="eyJhbGciOi..." />
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="jwtBtn">Decode</button>
+          <button id="jwtClear" class="small">Clear</button>
+        </div>
+        <div style="margin-top:10px">
+          <label>Header</label>
+          <div id="jwtHeader" class="output"></div>
+          <label style="margin-top:8px">Payload</label>
+          <div id="jwtPayload" class="output"></div>
+          <label style="margin-top:8px">Signature (base64url)</label>
+          <div id="jwtSig" class="output small"></div>
+        </div>
+        <p class="help">Tidak melakukan verifikasi signature. Untuk memverifikasi diperlukan kunci publik/secret.</p>
+      </div>
+
+      <!-- Base64 -->
+      <div id="b64" class="tool" style="display:none">
+        <h2>Base64 encoder / decoder</h2>
+        <label>Input</label>
+        <textarea id="b64Input" placeholder="Teks atau base64..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+          <select id="b64Mode">
+            <option value="enc">Encode</option>
+            <option value="dec">Decode</option>
+            <option value="decurl">Decode (base64url)</option>
+          </select>
+          <button id="b64Btn">Run</button>
+          <button id="b64Clear" class="small">Clear</button>
+        </div>
+        <div style="margin-top:10px">
+          <label>Output</label>
+          <div id="b64Output" class="output"></div>
+        </div>
+      </div>
+
+      <!-- Regex -->
+      <div id="regex" class="tool" style="display:none">
+        <h2>Regex tester</h2>
+        <label>Pattern</label>
+        <input type="text" id="regexPattern" placeholder="e.g. (\\d{3})-(\\d{4})" />
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <label style="width:120px">Flags</label>
+          <label class="small"><input type="checkbox" id="flag_g"> g</label>
+          <label class="small"><input type="checkbox" id="flag_i"> i</label>
+          <label class="small"><input type="checkbox" id="flag_m"> m</label>
+        </div>
+        <label style="margin-top:8px">Test string</label>
+        <textarea id="regexInput" placeholder="Masukkan teks untuk dicari..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="regexBtn">Test</button>
+          <button id="regexClear" class="small">Clear</button>
+        </div>
+        <div style="margin-top:10px">
+          <label>Matches / Groups</label>
+          <div id="regexOutput" class="output matches"></div>
+        </div>
+      </div>
+
+      <!-- URL -->
+      <div id="url" class="tool" style="display:none">
+        <h2>URL encode / decode</h2>
+        <label>Input</label>
+        <input type="text" id="urlInput" placeholder="https://example.com/?q=tes" />
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="urlEnc">Encode</button>
+          <button id="urlDec">Decode</button>
+          <button id="urlClear" class="small">Clear</button>
+        </div>
+        <div style="margin-top:10px">
+          <label>Result</label>
+          <div id="urlOutput" class="output"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer>Disclaimer: tool ini untuk tujuan edukasi. Jangan gunakan untuk aktivitas ilegal. Semua operasi lokal di browser.</footer>
+  </div>
+
+  <script>
+    // --- small util helpers ---
+    const $ = id => document.getElementById(id);
+    const setText = (el, txt) => { el.textContent = txt; };
+
+    // --- tool switching ---
+    document.querySelectorAll('.tool-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const tool = btn.dataset.tool;
+        document.querySelectorAll('.tool').forEach(t=>t.style.display='none');
+        $(tool).style.display='block';
+      })
+    });
+
+    // --- Clear helpers ---
+    document.getElementById('hashClear').addEventListener('click', ()=>{ $('hashInput').value=''; setText($('hashOutput'),''); });
+    document.getElementById('jwtClear').addEventListener('click', ()=>{ $('jwtInput').value=''; setText($('jwtHeader'),''); setText($('jwtPayload'),''); setText($('jwtSig'),''); });
+    document.getElementById('b64Clear').addEventListener('click', ()=>{ $('b64Input').value=''; setText($('b64Output'),''); });
+    document.getElementById('regexClear').addEventListener('click', ()=>{ $('regexPattern').value=''; $('flag_g').checked=false; $('flag_i').checked=false; $('flag_m').checked=false; $('regexInput').value=''; setText($('regexOutput'),''); });
+    document.getElementById('urlClear').addEventListener('click', ()=>{ $('urlInput').value=''; setText($('urlOutput'),''); });
+
+    // --- Hashing ---
+    async function digestMessage(message, algo) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(message);
+      const hashBuffer = await crypto.subtle.digest(algo, data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    // MD5 implementation (small) - adapted from a public domain snippet (compact)
+    // Note: included for compatibility; prefer SHA-256 for security.
+    function md5(str){
+      function cmn(q,a,b,x,s,t){a=((a+q+x+t)|0);return (((a<<s)|(a>>> (32-s)))+b)|0}
+      function ff(a,b,c,d,x,s,t){return cmn((b & c) | ((~b) & d),a,b,x,s,t)}
+      function gg(a,b,c,d,x,s,t){return cmn((b & d) | (c & (~d)),a,b,x,s,t)}
+      function hh(a,b,c,d,x,s,t){return cmn(b ^ c ^ d,a,b,x,s,t)}
+      function ii(a,b,c,d,x,s,t){return cmn(c ^ (b | (~d)),a,b,x,s,t)}
+      function toWords(s){var n=s.length,words=[];for(var i=0;i<n;i+=4){words[i>>2]=s.charCodeAt(i)|(s.charCodeAt(i+1)<<8)|(s.charCodeAt(i+2)<<16)|(s.charCodeAt(i+3)<<24);}return words}
+      function toHex(num){var s='',v;for(var i=0;i<4;i++){v=(num>>>(i*8))&255;s += ('0'+v.toString(16)).slice(-2)}return s}
+      // UTF8 encode
+      str = unescape(encodeURIComponent(str));
+      var n=str.length;
+      var words = [];
+      for(var i=0;i<n;i++) words[i>>2] |= (str.charCodeAt(i) & 0xff) << ((i%4)*8);
+      var bitLen = n*8;
+      words[bitLen>>5] |= 0x80 << (bitLen%32);
+      words[(((bitLen+64)>>>9)<<4)+14] = bitLen;
+      var a=1732584193,b=-271733879,c=-1732584194,d=271733878;
+      for(var i=0;i<words.length;i+=16){var olda=a,oldb=b,oldc=c,oldd=d;
+        a=ff(a,b,c,d,words[i+0],7,-680876936);
+        a=ff(a,b,c,d,words[i+1],12,-389564586);
+        a=ff(a,b,c,d,words[i+2],17,606105819);
+        a=ff(a,b,c,d,words[i+3],22,-1044525330);
+        a=ff(a,b,c,d,words[i+4],7,-176418897);
+        a=ff(a,b,c,d,words[i+5],12,1200080426);
+        a=ff(a,b,c,d,words[i+6],17,-1473231341);
+        a=ff(a,b,c,d,words[i+7],22,-45705983);
+        a=ff(a,b,c,d,words[i+8],7,1770035416);
+        a=ff(a,b,c,d,words[i+9],12,-1958414417);
+        a=ff(a,b,c,d,words[i+10],17,-42063);
+        a=ff(a,b,c,d,words[i+11],22,-1990404162);
+        a=ff(a,b,c,d,words[i+12],7,1804603682);
+        a=ff(a,b,c,d,words[i+13],12,-40341101);
+        a=ff(a,b,c,d,words[i+14],17,-1502002290);
+        a=ff(a,b,c,d,words[i+15],22,1236535329);
+        a=gg(a,b,c,d,words[i+1],5,-165796510);
+        a=gg(a,b,c,d,words[i+6],9,-1069501632);
+        a=gg(a,b,c,d,words[i+11],14,643717713);
+        a=gg(a,b,c,d,words[i+0],20,-373897302);
+        a=gg(a,b,c,d,words[i+5],5,-701558691);
+        a=gg(a,b,c,d,words[i+10],9,38016083);
+        a=gg(a,b,c,d,words[i+15],14,-660478335);
+        a=gg(a,b,c,d,words[i+4],20,-405537848);
+        a=gg(a,b,c,d,words[i+9],5,568446438);
+        a=gg(a,b,c,d,words[i+14],9,-1019803690);
+        a=gg(a,b,c,d,words[i+3],14,-187363961);
+        a=gg(a,b,c,d,words[i+8],20,1163531501);
+        a=gg(a,b,c,d,words[i+13],5,-1444681467);
+        a=gg(a,b,c,d,words[i+2],9,-51403784);
+        a=gg(a,b,c,d,words[i+7],14,1735328473);
+        a=gg(a,b,c,d,words[i+12],20,-1926607734);
+        a=hh(a,b,c,d,words[i+5],4,-378558);
+        a=hh(a,b,c,d,words[i+8],11,-2022574463);
+        a=hh(a,b,c,d,words[i+11],16,1839030562);
+        a=hh(a,b,c,d,words[i+14],23,-35309556);
+        a=hh(a,b,c,d,words[i+1],4,-1530992060);
+        a=hh(a,b,c,d,words[i+4],11,1272893353);
+        a=hh(a,b,c,d,words[i+7],16,-155497632);
+        a=hh(a,b,c,d,words[i+10],23,-1094730640);
+        a=hh(a,b,c,d,words[i+13],4,681279174);
+        a=hh(a,b,c,d,words[i+0],11,-358537222);
+        a=hh(a,b,c,d,words[i+3],16,-722521979);
+        a=hh(a,b,c,d,words[i+6],23,76029189);
+        a=hh(a,b,c,d,words[i+9],4,-640364487);
+        a=hh(a,b,c,d,words[i+12],11,-421815835);
+        a=hh(a,b,c,d,words[i+15],16,530742520);
+        a=hh(a,b,c,d,words[i+2],23,-995338651);
+        a=ii(a,b,c,d,words[i+0],6,-198630844);
+        a=ii(a,b,c,d,words[i+7],10,1126891415);
+        a=ii(a,b,c,d,words[i+14],15,-1416354905);
+        a=ii(a,b,c,d,words[i+5],21,-57434055);
+        a=ii(a,b,c,d,words[i+12],6,1700485571);
+        a=ii(a,b,c,d,words[i+3],10,-1894986606);
+        a=ii(a,b,c,d,words[i+10],15,-1051523);
+        a=ii(a,b,c,d,words[i+1],21,-2054922799);
+        a=ii(a,b,c,d,words[i+8],6,1873313359);
+        a=ii(a,b,c,d,words[i+15],10,-30611744);
+        a=ii(a,b,c,d,words[i+6],15,-1560198380);
+        a=ii(a,b,c,d,words[i+13],21,1309151649);
+        a=ii(a,b,c,d,words[i+4],6,-145523070);
+        a=ii(a,b,c,d,words[i+11],10,-1120210379);
+        a=ii(a,b,c,d,words[i+2],15,718787259);
+        a=ii(a,b,c,d,words[i+9],21,-343485551);
+        a=(a+olda)|0;b=(b+oldb)|0;c=(c+oldc)|0;d=(d+oldd)|0;
+      }
+      return toHex(a)+toHex(b)+toHex(c)+toHex(d);
+    }
+
+    document.getElementById('hashBtn').addEventListener('click', async ()=>{
+      const txt = $('hashInput').value || '';
+      const algo = $('hashAlgo').value;
+      if(!txt){ setText($('hashOutput'),'Please provide input.'); return; }
+      try{
+        if(algo==='md5'){
+          setText($('hashOutput'), md5(txt));
+        } else if(algo==='sha1'){
+          const res = await digestMessage(txt,'SHA-1'); setText($('hashOutput'),res);
+        } else if(algo==='sha256'){
+          const res = await digestMessage(txt,'SHA-256'); setText($('hashOutput'),res);
+        }
+      }catch(e){ setText($('hashOutput'),'Error: '+e.message); }
+    });
+
+    // --- JWT decode ---
+    function base64urlDecode(input){
+      input = input.replace(/-/g,'+').replace(/_/g,'/');
+      while(input.length % 4) input += '=';
+      try{ return decodeURIComponent(escape(window.atob(input))); }catch(e){ return null; }
+    }
+
+    document.getElementById('jwtBtn').addEventListener('click', ()=>{
+      const t = $('jwtInput').value.trim();
+      if(!t){ setText($('jwtHeader'),'Provide a token'); return; }
+      const parts = t.split('.');
+      if(parts.length<2){ setText($('jwtHeader'),'Invalid token (no dot)'); return; }
+      const h = base64urlDecode(parts[0]);
+      const p = base64urlDecode(parts[1]);
+      setText($('jwtHeader'), h ? h : 'Decoding error');
+      setText($('jwtPayload'), p ? p : 'Decoding error');
+      setText($('jwtSig'), parts[2] || '(no signature)');
+    });
+
+    // --- Base64 ---
+    function base64url_encode(str){ return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+    function base64url_decodeToStr(inp){
+      inp = inp.replace(/-/g,'+').replace(/_/g,'/'); while(inp.length%4) inp+='='; try{return decodeURIComponent(escape(atob(inp)));}catch(e){return null}
+    }
+
+    document.getElementById('b64Btn').addEventListener('click', ()=>{
+      const mode = $('b64Mode').value;
+      const val = $('b64Input').value || '';
+      if(mode==='enc'){
+        try{ setText($('b64Output'), btoa(unescape(encodeURIComponent(val)))); }catch(e){ setText($('b64Output'),'Encode error: '+e.message); }
+      } else if(mode==='dec'){
+        try{ setText($('b64Output'), atob(val)); }catch(e){ setText($('b64Output'),'Decode error (not valid base64)'); }
+      } else if(mode==='decurl'){
+        const out = base64url_decodeToStr(val);
+        setText($('b64Output'), out===null ? 'Decode error (not valid base64url)' : out);
+      }
+    });
+
+    // --- Regex tester ---
+    document.getElementById('regexBtn').addEventListener('click', ()=>{
+      const pat = $('regexPattern').value || '';
+      const s = $('regexInput').value || '';
+      const flags = ( $('flag_g').checked ? 'g' : '' ) + ( $('flag_i').checked ? 'i' : '' ) + ( $('flag_m').checked ? 'm' : '' );
+      if(!pat){ setText($('regexOutput'),'Provide a pattern'); return; }
+      try{
+        const re = new RegExp(pat, flags);
+        if(!flags.includes('g')){
+          const m = re.exec(s);
+          if(!m){ setText($('regexOutput'),'No match'); return; }
+          let out = 'Match found:\n' + m[0] + '\nGroups:\n';
+          for(let i=1;i<m.length;i++) out += `[${i}] ${m[i]}\n`;
+          setText($('regexOutput'), out);
+        } else {
+          const matches = []; let m; while((m = re.exec(s)) !== null){ matches.push(m); if(m[0].length===0) re.lastIndex++; }
+          if(matches.length===0){ setText($('regexOutput'),'No matches'); return; }
+          let out = 'Matches: '+matches.length+'\n\n';
+          matches.forEach((mm,i)=>{ out += `#${i+1}: ${mm[0]}\n`; if(mm.length>1){ out += ' Groups:\n'; for(let j=1;j<mm.length;j++) out += `  [${j}] ${mm[j]}\n`; } out += '\n'; });
+          setText($('regexOutput'), out);
+        }
+      }catch(e){ setText($('regexOutput'),'Regex error: '+e.message); }
+    });
+
+    // --- URL ---
+    document.getElementById('urlEnc').addEventListener('click', ()=>{
+      const v = $('urlInput').value || '';
+      try{ setText($('urlOutput'), encodeURIComponent(v)); }catch(e){ setText($('urlOutput'),'Error: '+e.message); }
+    });
+    document.getElementById('urlDec').addEventListener('click', ()=>{
+      const v = $('urlInput').value || '';
+      try{ setText($('urlOutput'), decodeURIComponent(v)); }catch(e){ setText($('urlOutput'),'Error: '+e.message); }
+    });
+
+  </script>
+</body>
+</html>

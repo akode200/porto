@@ -97,7 +97,7 @@
       line-height: 1.2;
     }
     .kodeFAOutput {
-      font-size: 6pt;
+      font-size: 7pt;
     }
     .lokasi {
       font-size: 7pt;
@@ -201,10 +201,8 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
           const [namaBarang, kodeFA, lokasi] = parts;
           const label = document.createElement("div");
           label.className = "label-container";
-          // fallback: kalau logo dimatikan → pakai PNG transparan 1x1 px
-        const logoSrc = withLogo 
-          ? "assets/images/Logo.png" 
-          : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAAAUCAYAAAB3ah7NAAAAF0lEQVR42mP8z/CfAQgwYKSIEVUAAG8HB0VgEvhWAAAAAElFTkSuQmCC";
+          // fallback: kalau logo dimatikan → pakai PNG transparan 80x20 px
+        const logoSrc = withLogo ? "assets/images/Logo.png" : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAAAUCAYAAAB3ah7NAAAAF0lEQVR42mP8z/CfAQgwYKSIEVUAAG8HB0VgEvhWAAAAAElFTkSuQmCC";
 
           label.innerHTML = `
             <div class="logo-container">
@@ -236,5 +234,6 @@ PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
   </script>
 </body>
 </html>
+
 
 

@@ -49,7 +49,7 @@
       background: #0056b3;
     }
     #labelOutput {
-      margin-top: 1rem;
+      margin-top: 2rem;
       display: flex;
       flex-wrap: wrap;
       gap: 15px;
@@ -58,7 +58,7 @@
     .label-container {
       width: 50.8mm;
       height: 35.7mm;
-      padding: 0px;
+      padding: 5px;
       background: white;
       border: 1px solid #ccc;
       display: flex;
@@ -70,8 +70,7 @@
     }
     .logo-container {
       width: 100%;
-      margin-bottom: 0px;
-      text-align: left;
+      margin-bottom: 2px;
     }
     .logo {
       width: 60%;
@@ -95,7 +94,7 @@
       width: 70%;
       font-size: 7pt;
       font-weight: bold;
-      line-height: 1;
+      line-height: 1.2;
     }
     .kodeFAOutput {
       font-size: 6pt;
@@ -144,11 +143,11 @@
   
   <div class="content">
     <h1>Print Label</h1>
-    <p>Masukkan data manual (format: <b>Lokasi Outlet [TAB] KodeFA [TAB] Barang</b> per baris):</p>
+    <p>Masukkan data manual (format: <b>NamaBarang [TAB] KodeFA [TAB] Lokasi</b> per baris):</p>
     
     <textarea id="manualInput" placeholder="Contoh:
-CIREBON-WAHIDIN    C0097    KOMPUTER, LENOVO M70E
-PEMALANG-OFFICE    C0501    PRINTER EPSON L3110"></textarea>
+KOMPUTER, LENOVO M70E    C0097    CIREBON-WAHIDIN
+PRINTER EPSON L3110      C0501    PEMALANG-OFFICE"></textarea>
     
     <div>
       <label>
@@ -168,83 +167,69 @@ PEMALANG-OFFICE    C0501    PRINTER EPSON L3110"></textarea>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
-  // Biarkan TAB menambah spasi di textarea
-  document.getElementById("manualInput").addEventListener("keydown", function(e) {
-    if (e.key === "Tab") {
-      e.preventDefault();
-      const start = this.selectionStart;
-      const end = this.selectionEnd;
-      this.value = this.value.substring(0, start) + "\t" + this.value.substring(end);
-      this.selectionStart = this.selectionEnd = start + 1;
-    }
-  });
-
-  // Attribution bisa diklik
-  document.getElementById("attribution").addEventListener("click", function() {
-    window.open("https://akode200.github.io/porto/", "_blank");
-  });
-
-  function generateLabels() {
-    const input = document.getElementById("manualInput").value.trim();
-    const output = document.getElementById("labelOutput");
-    const withLogo = document.getElementById("withLogo").checked;
-    output.innerHTML = "";
-
-    if (!input) {
-      alert("Mohon masukkan data terlebih dahulu.");
-      return;
-    }
-
-    const lines = input.split("\n");
-    lines.forEach(line => {
-      const parts = line.split(/\t+/); 
-      if (parts.length === 3) {
-        const [namaBarang, kodeFA, lokasi] = parts;
-        const label = document.createElement("div");
-        label.className = "label-container";
-        
-        // tetap ada container logo, hanya src yang dikosongkan
-        const logoSrc = withLogo ? "assets/images/Logo.png" : "";
-
-        label.innerHTML = `
-          <div class="logo-container">
-            <img src="${logoSrc}" alt="" class="logo">
-          </div>
-          <div class="top-container">
-            <div class="qrcode-container">
-              <canvas class="qrcode"></canvas>
-            </div>
-            <div class="text-container">
-              <p>${namaBarang}</p>
-              <p class="kodeFAOutput"><b>${kodeFA}</b></p>
-            </div>
-          </div>
-          <p class="lokasi">${lokasi}</p>
-        `;
-        output.appendChild(label);
-
-        const canvas = label.querySelector(".qrcode");
-        QRCode.toCanvas(canvas, kodeFA, {
-          width: 40,
-          height: 40,
-          margin: 1,
-          color: { dark: "#000000", light: "#ffffff" }
-        });
+    // Biarkan TAB menambah spasi di textarea
+    document.getElementById("manualInput").addEventListener("keydown", function(e) {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + "\t" + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 1;
       }
     });
-  }
-</script>
 
+    // Attribution bisa diklik
+    document.getElementById("attribution").addEventListener("click", function() {
+      window.open("https://akode200.github.io/porto/", "_blank");
+    });
+
+    function generateLabels() {
+      const input = document.getElementById("manualInput").value.trim();
+      const output = document.getElementById("labelOutput");
+      const withLogo = document.getElementById("withLogo").checked;
+      output.innerHTML = "";
+
+      if (!input) {
+        alert("Mohon masukkan data terlebih dahulu.");
+        return;
+      }
+
+      const lines = input.split("\n");
+      lines.forEach(line => {
+        const parts = line.split(/\t+/); 
+        if (parts.length === 3) {
+          const [namaBarang, kodeFA, lokasi] = parts;
+          const label = document.createElement("div");
+          label.className = "label-container";
+          
+          label.innerHTML = `
+            ${withLogo ? `
+              <div class="logo-container">
+                <img src="assets/images/Logo.png" alt="Logo" class="logo">
+              </div>` : ""}
+            <div class="top-container">
+              <div class="qrcode-container">
+                <canvas class="qrcode"></canvas>
+              </div>
+              <div class="text-container">
+                <p>${namaBarang}</p>
+                <p class="kodeFAOutput"><b>${kodeFA}</b></p>
+              </div>
+            </div>
+            <p class="lokasi">${lokasi}</p>
+          `;
+          output.appendChild(label);
+
+          const canvas = label.querySelector(".qrcode");
+          QRCode.toCanvas(canvas, kodeFA, {
+            width: 40,
+            height: 40,
+            margin: 1,
+            color: { dark: "#000000", light: "#ffffff" }
+          });
+        }
+      });
+    }
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-

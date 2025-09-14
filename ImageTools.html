@@ -11,6 +11,17 @@
       background: #f9fafb;
       color: #222;
     }
+    #attribution {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #555;
+      text-align: center;
+      cursor: pointer;
+    }
+    #attribution:hover {
+      color: #007bff;
+      text-decoration: underline;
+    }
     header {
       text-align: center;
       padding: 1rem;
@@ -245,6 +256,13 @@
       currentImage=null;
       canvas.width=0;canvas.height=0;
     }
+    // Attribution bisa diklik
+    document.getElementById("attribution").addEventListener("click", function() {
+      window.open("https://akode200.github.io/porto/", "_blank");
+    });
   </script>
+    <h6 id="attribution" class="text-center mb-4">
+      &copy; 2025 Miftah Parid. All rights reserved.
+    </h6>
 </body>
 </html>

@@ -42,6 +42,17 @@
 
     /* small layout tweaks for outputs */
     .output.small{min-height:28px;padding:8px;font-size:12px}
+    #attribution {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #555;
+      text-align: center;
+      cursor: pointer;
+    }
+    #attribution:hover {
+      color: #007bff;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -427,6 +438,13 @@
       document.querySelectorAll('.tool').forEach(t => t.style.display = 'none');
       if($('hash')) $('hash').style.display = 'block';
     })();
+        // Attribution bisa diklik
+    document.getElementById("attribution").addEventListener("click", function() {
+      window.open("https://akode200.github.io/porto/", "_blank");
+    });
   </script>
+    <h6 id="attribution" class="text-center mb-4">
+      &copy; 2025 Miftah Parid. All rights reserved.
+    </h6>
 </body>
 </html>

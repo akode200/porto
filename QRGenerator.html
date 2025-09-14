@@ -13,6 +13,17 @@
       background: #f5f5f5;
       color: #333;
     }
+    #attribution {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #555;
+      text-align: center;
+      cursor: pointer;
+    }
+    #attribution:hover {
+      color: #007bff;
+      text-decoration: underline;
+    }
     h1 {
       margin-bottom: 1.5rem;
     }
@@ -78,7 +89,9 @@
     </div>
     <canvas id="qrCanvas"></canvas>
   </div>
-
+    <h6 id="attribution" class="text-center mb-4">
+      &copy; 2025 Miftah Parid. All rights reserved.
+    </h6>
   <script>
     const qr = new QRious({
       element: document.getElementById("qrCanvas"),
@@ -105,7 +118,10 @@
         alert("Please enter a link first!");
       }
     }
-
+     // Attribution bisa diklik
+    document.getElementById("attribution").addEventListener("click", function() {
+      window.open("https://akode200.github.io/porto/", "_blank");
+    });
     function downloadQR() {
       if (!qr.value) {
         alert("Generate QR first!");
